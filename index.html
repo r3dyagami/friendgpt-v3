@@ -1207,30 +1207,16 @@
                 // Clone all character cards in the grid (except plus-card)
                 const originalCards = Array.from(grid.querySelectorAll('.character-card:not(.plus-card)'));
                 
-                // Create many copies for truly infinite scroll
-                for (let i = 0; i < 10; i++) {
+                // Create enough copies for smooth scrolling experience  
+                for (let i = 0; i < 3; i++) {
                     originalCards.forEach(card => {
                         const clone = card.cloneNode(true);
                         grid.appendChild(clone);
                     });
                 }
                 
-                // Set up manual scroll with infinite loop reset
-                grid.addEventListener('scroll', () => {
-                    const maxScroll = grid.scrollWidth - grid.clientWidth;
-                    const segmentSize = maxScroll / 10; // Since we have 10 copies
-                    
-                    if (grid.scrollLeft >= maxScroll - segmentSize) {
-                        grid.scrollLeft = grid.scrollLeft - (maxScroll - segmentSize * 2);
-                    } else if (grid.scrollLeft <= segmentSize) {
-                        grid.scrollLeft = grid.scrollLeft + (maxScroll - segmentSize * 2);
-                    }
-                });
-                
-                // Start from leftmost position - delay to ensure proper positioning
-                setTimeout(() => {
-                    grid.scrollLeft = 0;
-                }, 10);
+                // Start from leftmost position
+                grid.scrollLeft = 0;
             });
             
             // Re-attach click handlers to cloned cards

@@ -82,20 +82,6 @@
             justify-content: center;
         }
 
-        .test-api-btn,
-        .settings-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 4px;
-            margin-left: 8px;
-        }
-
-        .test-api-btn:hover {
-            color: #00ff88;
-        }
 
         /* Character Browser */
         .character-browser {
@@ -779,8 +765,6 @@
                         ⚡ <span id="creditsCount">50</span> Energy
                         <button class="credits-plus" id="plusBtn">+</button>
                     </div>
-                    <button class="test-api-btn" id="testApiBtn">🔧</button>
-                    <button class="settings-btn">⚙️</button>
                 </div>
                 <h1 class="header-title">FriendGPT</h1>
                 <p class="header-subtitle">Chat with friends you've always wanted</p>
@@ -1329,8 +1313,6 @@
                 });
             });
 
-            // API Test button
-            document.getElementById('testApiBtn').addEventListener('click', testApiConnection);
 
             // Character creator
             document.querySelector('.plus-card').addEventListener('click', openCharacterCreator);
@@ -1625,37 +1607,6 @@
             document.getElementById('giftModal').style.display = 'none';
         }
 
-        // API Test function
-        async function testApiConnection() {
-            const btn = document.getElementById('testApiBtn');
-            btn.textContent = '⏳';
-            btn.disabled = true;
-
-            try {
-                console.log('Testing API connection...');
-                const response = await fetch('/api/test');
-                const data = await response.json();
-                
-                console.log('API Test Results:', data);
-                
-                if (data.success && data.diagnostics.apiTest?.ok) {
-                    alert('✅ ChatGPT API Working!\n\nKey Status: ' + (data.diagnostics.hasApiKey ? 'Connected' : 'Missing') + 
-                          '\nAPI Response: ' + (data.diagnostics.apiTest.response || 'Success'));
-                } else {
-                    const errorMsg = data.diagnostics.apiTest?.error || 'Unknown error';
-                    alert('❌ API Issue Detected:\n\n' + errorMsg + 
-                          '\n\nKey Status: ' + (data.diagnostics.hasApiKey ? 'Present but invalid' : 'Missing') +
-                          '\nKey Preview: ' + (data.diagnostics.keyStart || 'NOT SET'));
-                }
-            } catch (error) {
-                console.error('Test failed:', error);
-                alert('❌ API Test Failed:\n\n' + error.message + 
-                      '\n\nThis usually means:\n1. API key not set in Vercel\n2. Network issue\n3. OpenAI API down');
-            }
-
-            btn.textContent = '🔧';
-            btn.disabled = false;
-        }
 
         // Character creator functions
         function openCharacterCreator() {

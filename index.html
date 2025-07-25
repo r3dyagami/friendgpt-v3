@@ -1203,8 +1203,8 @@
                 // Clone all character cards in the grid (except plus-card)
                 const originalCards = Array.from(grid.querySelectorAll('.character-card:not(.plus-card)'));
                 
-                // Create multiple copies for smooth infinite scroll
-                for (let i = 0; i < 3; i++) {
+                // Create many copies for truly infinite scroll
+                for (let i = 0; i < 10; i++) {
                     originalCards.forEach(card => {
                         const clone = card.cloneNode(true);
                         grid.appendChild(clone);
@@ -1249,12 +1249,12 @@
                             
                             // Reset scroll position for infinite effect
                             const maxScroll = grid.scrollWidth - grid.clientWidth;
-                            const halfScroll = maxScroll / 2;
+                            const segmentSize = maxScroll / 10; // Since we have 10 copies
                             
-                            if (grid.scrollLeft >= halfScroll) {
-                                grid.scrollLeft = grid.scrollLeft - halfScroll;
-                            } else if (grid.scrollLeft < 0) {
-                                grid.scrollLeft = halfScroll;
+                            if (grid.scrollLeft >= maxScroll - segmentSize) {
+                                grid.scrollLeft = grid.scrollLeft - (maxScroll - segmentSize * 2);
+                            } else if (grid.scrollLeft <= segmentSize) {
+                                grid.scrollLeft = grid.scrollLeft + (maxScroll - segmentSize * 2);
                             }
                             
                             requestAnimationFrame(scroll);
@@ -1498,10 +1498,7 @@
                 console.error('❌ Request failed - using fallback:', error.message);
                 hideTypingIndicator();
                 
-                // Show a message that API is not working
-                addMessage('⚠️ ChatGPT API not available - using fallback response', 'character');
-                
-                // Use fallback
+                // Use fallback silently
                 const fallback = getFallbackResponse(message);
                 addMessage(fallback, 'character');
                 conversationHistory.push({ role: 'assistant', content: fallback });

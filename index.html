@@ -41,16 +41,31 @@
             margin-bottom: 8px;
         }
 
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .header-text {
+            text-align: left;
+        }
+
         .header-title {
             font-size: 24px;
             font-weight: bold;
             color: #00ff88;
-            text-align: center;
             margin-bottom: 4px;
         }
 
         .header-subtitle {
-            text-align: center;
             color: #999;
             font-size: 14px;
         }
@@ -766,8 +781,13 @@
                         <button class="credits-plus" id="plusBtn">+</button>
                     </div>
                 </div>
-                <h1 class="header-title">FriendGPT</h1>
-                <p class="header-subtitle">Chat with friends you've always wanted</p>
+                <div class="header-content">
+                    <img src="/FriendGPT-3.jpg" alt="FriendGPT Logo" class="header-logo">
+                    <div class="header-text">
+                        <h1 class="header-title">FriendGPT</h1>
+                        <p class="header-subtitle">Chat with friends you've always wanted</p>
+                    </div>
+                </div>
             </div>
 
             <div class="character-browser">
@@ -1195,59 +1215,17 @@
                     });
                 }
                 
-                // Set up scroll behavior
-                let isScrolling = false;
-                let scrollVelocity = 0;
-                
-                // Auto-scroll on hover near edges
-                grid.addEventListener('mousemove', (e) => {
-                    const rect = grid.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const width = rect.width;
-                    const edgeSize = 100;
+                // Set up manual scroll with infinite loop reset
+                grid.addEventListener('scroll', () => {
+                    const maxScroll = grid.scrollWidth - grid.clientWidth;
+                    const segmentSize = maxScroll / 10; // Since we have 10 copies
                     
-                    if (x < edgeSize) {
-                        // Near left edge - scroll left
-                        scrollVelocity = -((edgeSize - x) / edgeSize) * 5;
-                        if (!isScrolling) startAutoScroll(grid);
-                    } else if (x > width - edgeSize) {
-                        // Near right edge - scroll right
-                        scrollVelocity = ((x - (width - edgeSize)) / edgeSize) * 5;
-                        if (!isScrolling) startAutoScroll(grid);
-                    } else {
-                        scrollVelocity = 0;
-                        isScrolling = false;
+                    if (grid.scrollLeft >= maxScroll - segmentSize) {
+                        grid.scrollLeft = grid.scrollLeft - (maxScroll - segmentSize * 2);
+                    } else if (grid.scrollLeft <= segmentSize) {
+                        grid.scrollLeft = grid.scrollLeft + (maxScroll - segmentSize * 2);
                     }
                 });
-                
-                grid.addEventListener('mouseleave', () => {
-                    scrollVelocity = 0;
-                    isScrolling = false;
-                });
-                
-                function startAutoScroll(grid) {
-                    isScrolling = true;
-                    function scroll() {
-                        if (scrollVelocity !== 0) {
-                            grid.scrollLeft += scrollVelocity;
-                            
-                            // Reset scroll position for infinite effect
-                            const maxScroll = grid.scrollWidth - grid.clientWidth;
-                            const segmentSize = maxScroll / 10; // Since we have 10 copies
-                            
-                            if (grid.scrollLeft >= maxScroll - segmentSize) {
-                                grid.scrollLeft = grid.scrollLeft - (maxScroll - segmentSize * 2);
-                            } else if (grid.scrollLeft <= segmentSize) {
-                                grid.scrollLeft = grid.scrollLeft + (maxScroll - segmentSize * 2);
-                            }
-                            
-                            requestAnimationFrame(scroll);
-                        } else {
-                            isScrolling = false;
-                        }
-                    }
-                    scroll();
-                }
                 
                 // Start from leftmost position - delay to ensure proper positioning
                 setTimeout(() => {

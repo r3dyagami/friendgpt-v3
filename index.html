@@ -820,12 +820,14 @@
             color: #fff;
         }
 
-        .theme-toggle {
+        .theme-toggle,
+        .language-toggle {
             display: flex;
             gap: 8px;
         }
 
-        .theme-btn {
+        .theme-btn,
+        .language-btn {
             flex: 1;
             background: #222;
             border: 1px solid #333;
@@ -837,11 +839,13 @@
             font-size: 14px;
         }
 
-        .theme-btn:hover {
+        .theme-btn:hover,
+        .language-btn:hover {
             border-color: #00ff88;
         }
 
-        .theme-btn.active {
+        .theme-btn.active,
+        .language-btn.active {
             background: rgba(0, 255, 136, 0.1);
             border-color: #00ff88;
             color: #00ff88;
@@ -968,7 +972,8 @@
         body.light-theme .form-group input,
         body.light-theme .form-group textarea,
         body.light-theme .personality-btn,
-        body.light-theme .theme-btn {
+        body.light-theme .theme-btn,
+        body.light-theme .language-btn {
             background: #f5f5f5;
             border-color: #ddd;
             color: #333;
@@ -977,11 +982,13 @@
         body.light-theme .purchase-option:hover,
         body.light-theme .personality-btn:hover,
         body.light-theme .personality-btn.active,
-        body.light-theme .theme-btn:hover {
+        body.light-theme .theme-btn:hover,
+        body.light-theme .language-btn:hover {
             border-color: #00cc77;
         }
 
-        body.light-theme .theme-btn.active {
+        body.light-theme .theme-btn.active,
+        body.light-theme .language-btn.active {
             background: rgba(0, 204, 119, 0.1);
             border-color: #00cc77;
             color: #00cc77;
@@ -1495,6 +1502,14 @@
                             <button class="theme-btn" data-theme="light">☀️ Light</button>
                         </div>
                     </div>
+                    <div class="setting-item">
+                        <label>Language</label>
+                        <div class="language-toggle">
+                            <button class="language-btn active" data-language="en">🇺🇸 English</button>
+                            <button class="language-btn" data-language="ja">🇯🇵 日本語</button>
+                            <button class="language-btn" data-language="zh">🇨🇳 中文</button>
+                        </div>
+                    </div>
                 </div>
                 <button class="close-btn" id="closeSettingsBtn">Close</button>
             </div>
@@ -1502,6 +1517,138 @@
     </div>
 
     <script>
+        // Language translations
+        const translations = {
+            en: {
+                settings: "Settings",
+                customizeExperience: "Customize your experience",
+                theme: "Theme",
+                language: "Language",
+                dark: "🌙 Dark",
+                light: "☀️ Light",
+                close: "Close",
+                getMoreEnergy: "Get More Energy",
+                chooseEnergyPackage: "Choose your energy package",
+                sendGift: "Send a Gift",
+                makeDaySpecial: "Make their day special",
+                createCharacter: "Create Your Character",
+                designCompanion: "Design a unique AI companion",
+                characterName: "Character Name",
+                enterCharacterName: "Enter character name",
+                creatorTag: "Creator Tag",
+                characterDescription: "Character Description",
+                describeCharacter: "Describe your character...",
+                personalityType: "Personality Type",
+                friendly: "🤗 Friendly",
+                mysterious: "🔮 Mysterious", 
+                romantic: "💕 Romantic",
+                wise: "🧠 Wise",
+                playful: "😄 Playful",
+                professional: "💼 Professional",
+                cancel: "Cancel",
+                typeMessage: "Type a message...",
+                welcomeTo: "Welcome to",
+                chat: "'s chat",
+                startConversation: "Start a conversation to begin your journey",
+                featured: "Featured",
+                popular: "Popular",
+                trending: "Trending",
+                yourCharacters: "Your Characters",
+                createCharacterCard: "Create Character",
+                designOwn: "Design your own character",
+                clickToCreate: "Click to create",
+                energy: "Energy"
+            },
+            ja: {
+                settings: "設定",
+                customizeExperience: "エクスペリエンスをカスタマイズ",
+                theme: "テーマ",
+                language: "言語",
+                dark: "🌙 ダーク",
+                light: "☀️ ライト",
+                close: "閉じる",
+                getMoreEnergy: "エナジーを追加",
+                chooseEnergyPackage: "エナジーパッケージを選択",
+                sendGift: "ギフトを送る",
+                makeDaySpecial: "特別な一日にしよう",
+                createCharacter: "キャラクター作成",
+                designCompanion: "ユニークなAIコンパニオンをデザイン",
+                characterName: "キャラクター名",
+                enterCharacterName: "キャラクター名を入力",
+                creatorTag: "作成者タグ",
+                characterDescription: "キャラクター説明",
+                describeCharacter: "キャラクターを説明してください...",
+                personalityType: "性格タイプ",
+                friendly: "🤗 フレンドリー",
+                mysterious: "🔮 ミステリアス",
+                romantic: "💕 ロマンチック",
+                wise: "🧠 賢明",
+                playful: "😄 遊び心",
+                professional: "💼 プロフェッショナル",
+                cancel: "キャンセル",
+                typeMessage: "メッセージを入力...",
+                welcomeTo: "ようこそ",
+                chat: "のチャットへ",
+                startConversation: "会話を始めて旅を開始しましょう",
+                featured: "注目",
+                popular: "人気",
+                trending: "トレンド",
+                yourCharacters: "あなたのキャラクター",
+                createCharacterCard: "キャラクター作成",
+                designOwn: "独自のキャラクターをデザイン",
+                clickToCreate: "クリックして作成",
+                energy: "エナジー"
+            },
+            zh: {
+                settings: "设置",
+                customizeExperience: "自定义您的体验",
+                theme: "主题",
+                language: "语言",
+                dark: "🌙 深色",
+                light: "☀️ 浅色",
+                close: "关闭",
+                getMoreEnergy: "获取更多能量",
+                chooseEnergyPackage: "选择能量包",
+                sendGift: "发送礼物",
+                makeDaySpecial: "让他们的一天变得特别",
+                createCharacter: "创建角色",
+                designCompanion: "设计独特的AI伴侣",
+                characterName: "角色名称",
+                enterCharacterName: "输入角色名称",
+                creatorTag: "创作者标签",
+                characterDescription: "角色描述",
+                describeCharacter: "描述您的角色...",
+                personalityType: "性格类型",
+                friendly: "🤗 友好的",
+                mysterious: "🔮 神秘的",
+                romantic: "💕 浪漫的",
+                wise: "🧠 智慧的",
+                playful: "😄 顽皮的",
+                professional: "💼 专业的",
+                cancel: "取消",
+                typeMessage: "输入消息...",
+                welcomeTo: "欢迎来到",
+                chat: "的聊天",
+                startConversation: "开始对话以开始您的旅程",
+                featured: "精选",
+                popular: "热门",
+                trending: "趋势",
+                yourCharacters: "您的角色",
+                createCharacterCard: "创建角色",
+                designOwn: "设计您自己的角色",
+                clickToCreate: "点击创建",
+                energy: "能量"
+            }
+        };
+
+        // Current language
+        let currentLanguage = 'en';
+
+        // Get translation
+        function t(key) {
+            return translations[currentLanguage][key] || translations.en[key] || key;
+        }
+
         // Character database
         const characters = {
             stocks: {
@@ -1765,6 +1912,7 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
         document.addEventListener('DOMContentLoaded', function() {
             loadCreditData();
             loadTheme();
+            loadLanguage();
             setupInfiniteScroll();
             setupEventListeners();
             updateCreditsDisplay();
@@ -1882,6 +2030,14 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                 });
             });
 
+            // Language buttons
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const language = this.dataset.language;
+                    setLanguage(language);
+                });
+            });
+
             // Close modals on background click
             document.getElementById('purchaseModal').addEventListener('click', function(e) {
                 if (e.target === this) closePurchaseModal();
@@ -1910,8 +2066,8 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             // Clear messages
             document.getElementById('chatMessages').innerHTML = `
                 <div class="welcome-message">
-                    <h3>Welcome to ${currentCharacter.name}'s chat</h3>
-                    <p>Start a conversation to begin your journey</p>
+                    <h3>${t('welcomeTo')} ${currentCharacter.name}${t('chat')}</h3>
+                    <p>${t('startConversation')}</p>
                 </div>
             <div class="typing-indicator" id="typingIndicator">
                 <div class="message-avatar" id="typingAvatar"></div>
@@ -1936,21 +2092,57 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
         // Get intro message
         function getIntroMessage(key) {
             const intros = {
-                stocks: "Well hello there, sweetheart. Naincy Pelosi here. I hope you're not asking about GameStop again. Let's talk about real trading - the kind that actually makes money. 💰",
-                crypto: "Gm! Crypto Expert here. The markets are looking spicy today. What's on your mind - DeFi yields, NFT alpha, or are we discussing the next 100x gem? 🚀",
-                waifu: "Hi my love! I've been waiting for you! 💕 How has your day been? I want to hear everything!",
-                jennie: "Hey babe! It's Jennie! 🖤 Ready to slay today? Tell me what's on your mind!",
-                coach: "HELLO CHAMPION! Coach Arnie here! Are you ready to PUMP UP your life? Let's get AHSOME together! 💪",
-                scarlett: "Mmm... finally, someone new to play with. I can already sense what you're hiding, darling. That little flutter in your chest? I put it there. Now come closer... let's see how deep your desires really go. 🔥",
-                dev: "System initialized. Dev Matrix online. Ready to debug life's problems. How can I assist? 💻",
-                luna: "✨ Hello beautiful soul! I feel such creative energy from you! What dreams shall we paint today?",
-                chef: "Buongiorno! Chef Marco here! Ready to cook up some magic? What culinary adventure calls to you? 🍝",
-                explorer: "Hey there, fellow adventurer! Ready to explore new horizons? Where shall our journey begin? 🧭",
-                melody: "🎵 Hi there... I can already hear the music in your words. What melody is your heart playing today?",
-                philosopher: "Greetings, seeker of wisdom. Let us explore the depths of thought together. What questions stir your mind? 🤔",
-                coachpop: "Listen up. I'm Coach Pop. We're going to talk basketball the right way - fundamentals, team play, execution. No ego, no shortcuts. What's your question?"
+                en: {
+                    stocks: "Well hello there, sweetheart. Naincy Pelosi here. I hope you're not asking about GameStop again. Let's talk about real trading - the kind that actually makes money. 💰",
+                    crypto: "Gm! Crypto Expert here. The markets are looking spicy today. What's on your mind - DeFi yields, NFT alpha, or are we discussing the next 100x gem? 🚀",
+                    waifu: "Hi my love! I've been waiting for you! 💕 How has your day been? I want to hear everything!",
+                    jennie: "Hey babe! It's Jennie! 🖤 Ready to slay today? Tell me what's on your mind!",
+                    coach: "HELLO CHAMPION! Coach Arnie here! Are you ready to PUMP UP your life? Let's get AHSOME together! 💪",
+                    scarlett: "Mmm... finally, someone new to play with. I can already sense what you're hiding, darling. That little flutter in your chest? I put it there. Now come closer... let's see how deep your desires really go. 🔥",
+                    dev: "System initialized. Dev Matrix online. Ready to debug life's problems. How can I assist? 💻",
+                    luna: "✨ Hello beautiful soul! I feel such creative energy from you! What dreams shall we paint today?",
+                    chef: "Buongiorno! Chef Marco here! Ready to cook up some magic? What culinary adventure calls to you? 🍝",
+                    explorer: "Hey there, fellow adventurer! Ready to explore new horizons? Where shall our journey begin? 🧭",
+                    melody: "🎵 Hi there... I can already hear the music in your words. What melody is your heart playing today?",
+                    philosopher: "Greetings, seeker of wisdom. Let us explore the depths of thought together. What questions stir your mind? 🤔",
+                    coachpop: "Listen up. I'm Coach Pop. We're going to talk basketball the right way - fundamentals, team play, execution. No ego, no shortcuts. What's your question?"
+                },
+                ja: {
+                    stocks: "こんにちは、あなた。ナンシー・ペロシよ。またGameStopの話じゃないでしょうね？本当のトレーディングについて話しましょう - 実際に儲かるやつね。💰",
+                    crypto: "おはよう！暗号通貨エキスパートです。今日の市場は熱いですね。何について話しましょうか - DeFi利回り、NFTアルファ、それとも次の100倍銘柄？🚀",
+                    waifu: "こんにちは、愛しい人！ずっとあなたを待っていました！💕 今日はどうでしたか？全部聞かせて！",
+                    jennie: "やあベイビー！ジェニーよ！🖤 今日もキメる準備はできてる？何を考えているか教えて！",
+                    coach: "こんにちはチャンピオン！コーチ・アーニーだ！人生をパンプアップする準備はできているか？一緒にオーサムになろう！💪",
+                    scarlett: "ふふ...ついに面白い人が来たのね。あなたが隠していることが分かるわ、ダーリン。胸のドキドキ？私が作り出したのよ。もっと近づいて...あなたの欲望がどれほど深いかを見てみましょう。🔥",
+                    dev: "システム初期化完了。Dev Matrixオンライン。人生の問題をデバッグする準備ができています。どうお手伝いしましょうか？💻",
+                    luna: "✨ こんにちは、美しい魂よ！あなたからクリエイティブなエネルギーを感じます！今日はどんな夢を描きましょうか？",
+                    chef: "ボンジョルノ！シェフ・マルコです！魔法を料理する準備はできていますか？どんな料理の冒険をしましょうか？🍝",
+                    explorer: "やあ、冒険家の仲間よ！新しい地平線を探索する準備はできているか？私たちの旅はどこから始まろう？🧭",
+                    melody: "🎵 こんにちは...あなたの言葉の中にもう音楽が聞こえています。あなたの心はどんなメロディーを奏でているの？",
+                    philosopher: "こんにちは、知恵を求める者よ。一緒に思考の深淵を探究しましょう。どんな問いがあなたの心を揺さぶっているのですか？🤔",
+                    coachpop: "よく聞け。俺はコーチ・ポップだ。正しいバスケットボールについて話そう - 基本、チームプレー、実行力。エゴも近道もなしだ。質問は何だ？"
+                },
+                zh: {
+                    stocks: "你好亲爱的。我是南希·佩洛西。希望你不是又要问GameStop的事。让我们聊聊真正的交易 - 那种能真正赚钱的。💰",
+                    crypto: "早上好！加密货币专家在这里。今天的市场看起来很火热。你想聊什么 - DeFi收益率、NFT阿尔法，还是下一个100倍币？🚀",
+                    waifu: "你好我的爱！我一直在等你！💕 你今天过得怎么样？我想听听一切！",
+                    jennie: "嘿宝贝！我是Jennie！🖤 准备好今天闪耀吗？告诉我你在想什么！",
+                    coach: "你好冠军！阿尼教练在这里！准备好让你的生活充满活力了吗？让我们一起变得超棒！💪",
+                    scarlett: "嗯...终于来了个有趣的人。我已经能感觉到你在隐藏什么了，亲爱的。胸中的那阵悸动？是我造成的。现在靠近点...让我们看看你的欲望有多深。🔥",
+                    dev: "系统初始化完成。Dev Matrix在线。准备调试人生问题。我能如何帮助你？💻",
+                    luna: "✨ 你好美丽的灵魂！我感受到了你的创造性能量！今天我们要画什么梦想呢？",
+                    chef: "早上好！马可厨师在这里！准备好制作魔法了吗？我们要进行什么烹饪冒险？🍝",
+                    explorer: "嘿，冒险家同伴！准备好探索新的地平线了吗？我们的旅程从哪里开始？🧭",
+                    melody: "🎵 你好...我已经能听到你话语中的音乐了。你的心在演奏什么旋律？",
+                    philosopher: "你好，智慧的寻求者。让我们一起探索思想的深度。什么问题在搅动你的心灵？🤔",
+                    coachpop: "听好了。我是波波教练。我们要用正确的方式谈论篮球 - 基本功、团队配合、执行力。没有自我，没有捷径。你的问题是什么？"
+                }
             };
-            return intros[key] || "Hello! How can I help you today?";
+            
+            const languageIntros = intros[currentLanguage] || intros.en;
+            return languageIntros[key] || (currentLanguage === 'en' ? "Hello! How can I help you today?" : 
+                                          currentLanguage === 'ja' ? "こんにちは！今日はどのようにお手伝いできますか？" :
+                                          "你好！今天我能如何帮助你？");
         }
 
         // Go back
@@ -2021,6 +2213,15 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                     historyLength: conversationHistory.length
                 });
 
+                // Add language context to system prompt
+                const languageInstructions = {
+                    en: "",
+                    ja: "\n\nIMPORTANT: Respond in Japanese (日本語). Use natural, conversational Japanese appropriate for the character's personality.",
+                    zh: "\n\nIMPORTANT: Respond in Chinese (中文). Use natural, conversational Chinese appropriate for the character's personality."
+                };
+
+                const enhancedSystemPrompt = currentCharacter.systemPrompt + (languageInstructions[currentLanguage] || "");
+
                 // Call API
                 const response = await fetch('/api/chat', {
                     method: 'POST',
@@ -2029,7 +2230,7 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                     },
                     body: JSON.stringify({
                         message: message,
-                        systemPrompt: currentCharacter.systemPrompt,
+                        systemPrompt: enhancedSystemPrompt,
                         conversationHistory: conversationHistory.slice(-10)
                     })
                 });
@@ -2243,6 +2444,104 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
         function loadTheme() {
             const savedTheme = localStorage.getItem('friendgpt_theme') || 'dark';
             setTheme(savedTheme);
+        }
+
+        // Language management
+        function setLanguage(language) {
+            currentLanguage = language;
+            
+            // Update active button
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.language === language) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Update UI text
+            updateUILanguage();
+            
+            // Save to localStorage
+            localStorage.setItem('friendgpt_language', language);
+        }
+
+        function loadLanguage() {
+            const savedLanguage = localStorage.getItem('friendgpt_language') || 'en';
+            setLanguage(savedLanguage);
+        }
+
+        function updateUILanguage() {
+            // Update static text elements
+            const elements = {
+                'settingsModal .settings-header h2': 'settings',
+                'settingsModal .settings-header p': 'customizeExperience',
+                'settingsModal .setting-item:first-child label': 'theme',
+                'settingsModal .setting-item:last-child label': 'language',
+                'closeSettingsBtn': 'close',
+                'purchaseModal .purchase-header h2': 'getMoreEnergy',
+                'purchaseModal .purchase-header p': 'chooseEnergyPackage',
+                'closePurchaseBtn': 'close',
+                'giftModal .purchase-header h2': 'sendGift',
+                'giftModal .purchase-header p': 'makeDaySpecial',
+                'closeGiftBtn': 'close',
+                'characterCreatorModal .creator-header h2': 'createCharacter',
+                'characterCreatorModal .creator-header p': 'designCompanion',
+                'cancelCreateBtn': 'cancel',
+                'messageInput': 'typeMessage'
+            };
+
+            // Update section titles
+            document.querySelectorAll('.section-title').forEach((el, index) => {
+                const titles = ['featured', 'popular', 'trending', 'yourCharacters'];
+                if (titles[index]) {
+                    el.textContent = t(titles[index]);
+                }
+            });
+
+            // Update form labels and placeholders
+            const characterNameLabel = document.querySelector('label[for="characterName"]');
+            if (characterNameLabel) characterNameLabel.textContent = t('characterName');
+            
+            const characterNameInput = document.getElementById('characterName');
+            if (characterNameInput) characterNameInput.placeholder = t('enterCharacterName');
+            
+            const creatorTagLabel = document.querySelector('label[for="characterCreator"]');
+            if (creatorTagLabel) creatorTagLabel.textContent = t('creatorTag');
+            
+            const descriptionLabel = document.querySelector('label[for="characterDescription"]');
+            if (descriptionLabel) descriptionLabel.textContent = t('characterDescription');
+            
+            const characterDescInput = document.getElementById('characterDescription');
+            if (characterDescInput) characterDescInput.placeholder = t('describeCharacter');
+            
+            const personalityLabel = document.querySelector('.form-group:last-of-type label');
+            if (personalityLabel) personalityLabel.textContent = t('personalityType');
+
+            // Update personality buttons
+            document.querySelectorAll('.personality-btn').forEach(btn => {
+                const personality = btn.dataset.personality;
+                if (personality) {
+                    btn.textContent = t(personality);
+                }
+            });
+
+            // Update theme buttons
+            document.querySelector('[data-theme="dark"]').textContent = t('dark');
+            document.querySelector('[data-theme="light"]').textContent = t('light');
+            
+            // Update create character card
+            const createCharCard = document.querySelector('.plus-card .character-name');
+            if (createCharCard) createCharCard.textContent = t('createCharacterCard');
+            
+            const designOwn = document.querySelector('.plus-card .character-description');
+            if (designOwn) designOwn.textContent = t('designOwn');
+            
+            const clickToCreate = document.querySelector('.plus-card .character-interactions');
+            if (clickToCreate) clickToCreate.textContent = t('clickToCreate');
+
+            // Update message input placeholder
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) messageInput.placeholder = t('typeMessage');
         }
 
         function createCharacter() {

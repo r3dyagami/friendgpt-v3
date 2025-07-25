@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FriendGPT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 428px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .header {
+            background: #000;
+            padding: 16px 20px;
+            border-bottom: 1px solid #00ff88;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .header-subtitle {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .credits {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 20px;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #00ff88;
+        }
+
+        .credits-plus {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .test-api-btn,
+        .settings-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 8px;
+        }
+
+        .test-api-btn:hover {
+            color: #00ff88;
+        }
+
+        /* Character Browser */
+        .character-browser {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .section {
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+
+        .character-grid {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 4px 4px 4px 4px;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -4px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .character-grid::-webkit-scrollbar {
+            display: none;
+        }
+
+        .character-card {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 170px;
+            height: 240px;
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin: 4px 0;
+        }
+
+        .character-card:hover {
+            border-color: #00ff88;
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+            transform: scale(1.02);
+        }
+
+        .character-avatar {
+            width: 100%;
+            height: 130px;
+            border-radius: 8px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+            background-color: #222;
+        }
+
+        .character-name {
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .character-creator {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .character-interactions {
+            font-size: 10px;
+            color: #00ff88;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .character-description {
+            font-size: 10px;
+            color: #999;
+            line-height: 1.3;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            flex: 1;
+            margin-top: auto;
+        }
+        
+        .character-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 0;
+        }
+
+        .plus-card {
+            border: 2px dashed #333;
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .plus-avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            font-size: 40px;
+            height: 130px;
+            border-radius: 8px;
+        }
+
+        .placeholder-card {
+            border: 1px solid #222;
+            background: rgba(40, 40, 40, 0.5);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .placeholder-card:hover {
+            border-color: #444;
+            box-shadow: 0 2px 8px rgba(100, 100, 100, 0.2);
+            transform: scale(1.01);
+        }
+
+        .placeholder-avatar {
+            background: linear-gradient(135deg, #333 0%, #555 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-size: 24px;
+            height: 130px;
+            border-radius: 8px;
+        }
+
+        .placeholder-text {
+            color: #777 !important;
+        }
+
+        .coming-soon {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px dashed #555;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        /* Chat View */
+        #chatView {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .chat-header {
+            background: #000;
+            padding: 16px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #00ff88;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .chat-info {
+            flex: 1;
+        }
+
+        .chat-character-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .chat-character-creator {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .gift-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            color: #ffd700;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Messages */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .welcome-message h3 {
+            color: #00ff88;
+            margin-bottom: 8px;
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message.user .message-bubble {
+            background: #00ff88;
+            color: #000;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.character .message-bubble {
+            background: #222;
+            color: #fff;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.gift-sent {
+            justify-content: center;
+        }
+
+        .message.gift-sent .message-bubble {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #000;
+            font-weight: bold;
+            text-align: center;
+            padding: 12px 24px;
+            border-radius: 20px;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px 14px;
+            background: #222;
+            border-radius: 16px;
+            max-width: 60px;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff88;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Input Area */
+        .chat-input-container {
+            padding: 16px;
+            border-top: 1px solid #333;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            resize: none;
+            max-height: 120px;
+            line-height: 1.4;
+        }
+
+        .send-button {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Purchase Modal */
+        .purchase-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .purchase-content {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 360px;
+            width: 90%;
+        }
+
+        .purchase-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .purchase-header h2 {
+            color: #00ff88;
+            margin-bottom: 8px;
+        }
+
+        .purchase-options {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .purchase-option {
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .purchase-option:hover {
+            border-color: #00ff88;
+        }
+
+        .purchase-amount {
+            font-size: 20px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .purchase-price {
+            font-size: 16px;
+            color: #999;
+        }
+
+        /* Gift Modal */
+        .gift-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gift-content {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 360px;
+            width: 90%;
+        }
+
+        .gift-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .gift-item {
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .gift-item:hover {
+            border-color: #ffd700;
+        }
+
+        .gift-emoji {
+            font-size: 32px;
+            margin-bottom: 4px;
+        }
+
+        .gift-cost {
+            font-size: 12px;
+            color: #00ff88;
+        }
+
+        .close-btn {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Character Creator Modal */
+        .character-creator-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .creator-content {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .creator-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .creator-header h2 {
+            color: #00ff88;
+            margin-bottom: 8px;
+        }
+
+        .creator-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #00ff88;
+        }
+
+        .personality-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .personality-btn {
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .personality-btn:hover,
+        .personality-btn.active {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .creator-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .create-btn {
+            flex: 1;
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .create-btn:hover {
+            background: #00dd77;
+        }
+
+        .cancel-btn {
+            flex: 1;
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cancel-btn:hover {
+            background: #444;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .character-card {
+                width: 150px;
+                height: 220px;
+            }
+            
+            .character-avatar {
+                height: 110px;
+            }
+            
+            .plus-avatar {
+                height: 110px;
+                font-size: 36px;
+            }
+            
+            .character-name {
+                font-size: 12px;
+            }
+            
+            .character-creator,
+            .character-interactions,
+            .character-description {
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .character-card {
+                width: 130px;
+                height: 200px;
+            }
+            
+            .character-avatar {
+                height: 95px;
+            }
+            
+            .plus-avatar {
+                height: 95px;
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Browser View -->
+        <div id="browserView">
+            <div class="header">
+                <div class="header-top">
+                    <div></div>
+                    <div class="credits">
+                        ⚡ <span id="creditsCount">50</span> Energy
+                        <button class="credits-plus" id="plusBtn">+</button>
+                    </div>
+                    <button class="test-api-btn" id="testApiBtn">🔧</button>
+                    <button class="settings-btn">⚙️</button>
+                </div>
+                <h1 class="header-title">FriendGPT</h1>
+                <p class="header-subtitle">Chat with friends you've always wanted</p>
+            </div>
+
+            <div class="character-browser">
+                <!-- Featured Characters -->
+                <div class="section">
+                    <h2 class="section-title">Featured</h2>
+                    <div class="character-grid">
+                        <div class="character-card" data-character="stocks">
+                            <div class="character-avatar" style="background-image: url('/naincy-pelosi.jpg');"></div>
+                            <div class="character-info">
+                                <div class="character-name">Naincy Pelosi</div>
+                                <div class="character-creator">by @naincytrades</div>
+                                <div class="character-interactions">203.1k interactions</div>
+                                <div class="character-description">📈 Capitol's elite trader | 💰 Insider access</div>
+                            </div>
+                        </div>
+                        
+                        <div class="character-card" data-character="crypto">
+                            <div class="character-avatar" style="background-image: url('/cryptoexpert.jpeg');"></div>
+                            <div class="character-info">
+                                <div class="character-name">Crypto Expert</div>
+                                <div class="character-creator">by @crypto_pro</div>
+                                <div class="character-interactions">145.2k interactions</div>
+                                <div class="character-description">₿ Web3 VC analyst | 🚀 DeFi specialist</div>
+                            </div>
+                        </div>
+                        
+                        <div class="character-card" data-character="waifu">
+                            <div class="character-avatar" style="background-image: url('/waifu-anime.jpg');"></div>
+                            <div class="character-info">
+                                <div class="character-name">Waifu</div>
+                                <div class="character-creator">by @caring_soul</div>
+                                <div class="character-interactions">892.4k interactions</div>
+                                <div class="character-description">💕 Caring companion | 🌸 Always here for you</div>
+                            </div>
+                        </div>
+
+                        <!-- Placeholder Characters -->
+                        <div class="character-card placeholder-card">
+                            <div class="character-avatar placeholder-avatar">?</div>
+                            <div class="character-info">
+                                <div class="character-name placeholder-text">Mystery Character</div>
+                                <div class="character-creator placeholder-text">by @unknown</div>
+                                <div class="character-interactions placeholder-text">0 interactions</div>
+                                <div class="character-description placeholder-text">Something amazing is coming...</div>
+                                <div class="coming-soon">Coming Soon</div>
+                            </div>
+                        </div>
+
+                        <div class="character-card placeholder-card">
+                            <div class="character-avatar placeholder-avatar">⭐</div>
+                            <div class="character-info">
+                                <div class="character-name placeholder-text">Celebrity AI</div>
+                                <div class="character-creator placeholder-text">by @famous</div>
+                                <div class="character-interactions placeholder-text">0 interactions</div>
+                                <div class="character-description placeholder-text">A-list personality coming soon...</div>
+                                <div class="coming-soon">In Development</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Popular Characters -->
+                <div class="section">
+                    <h2 class="section-title">Popular</h2>
+                    <div class="character-grid">
+                        <div class="character-card" data-character="jennie">
+                            <div class="character-avatar" style="background-image: url('/jennieGPT.jpg');"></div>
+                            <div class="character-info">
+                                <div class="character-name">Jennie</div>
+                                <div class="character-creator">by @kpop_stan</div>
+                                <div class="character-interactions">567.8k interactions</div>
+                                <div class="character-description">🖤 Blackpink K-pop queen | ✨ Fashion icon</div>
+                            </div>
+                        </div>
+                        
+                        <div class="character-card" data-character="coach">
+                            <div class="character-avatar" style="background-image: url('/coacharnieGPT.jpg');"></div>
+                            <div class="character-info">
+                                <div class="character-name">Coach Arnie</div>
+                                <div class="character-creator">by @the_governator</div>
+                                <div class="character-interactions">750.2k interactions</div>
+                                <div class="character-description">🏆 Austrian Oak legend | 💪 Motivational coach</div>
+                            </div>
+                        </div>
+                        
+                        <div class="character-card" data-character="scarlett">
+                            <div class="character-avatar" style="background-image: url('/scarlett.png');"></div>
+                            <div class="character-info">
+                                <div class="character-name">Scarlett</div>
+                                <div class="character-creator">by @night_whispers</div>
+                                <div class="character-interactions">487.3k interactions</div>
+                                <div class="character-description">🌹 Intimate conversations | 🔥 Flirtatious expert</div>
+                            </div>
+                        </div>
+                        
+                        <div class="character-card" data-character="dev">
+                            <div class="character-avatar" style="background-image: url('/dev-matrix.png');"></div>
+                            <div class="character-info">
+                                <div class="character-name">Dev Matrix</div>
+                                <div class="character-creator">by @code_master</div>
+                                <div class="character-interactions">678.9k interactions</div>
+                                <div class="character-description">💻 Logical code wizard | 🐛 Debug specialist</div>
+                            </div>
+                        </div>
+
+                        <!-- Placeholder Characters -->
+                        <div class="character-card placeholder-card">
+                            <div class="character-avatar placeholder-avatar">🎭</div>
+                            <div class="character-info">
+                                <div class="character-name placeholder-text">Drama Queen</div>
+                                <div class="character-creator placeholder-text">by @theater</div>
+                                <div class="character-interactions placeholder-text">0 interactions</div>
+                                <div class="character-description placeholder-text">Dramatic flair meets AI personality...</div>
+                                <div class="coming-soon">Coming Soon</div>
+                            </div>
+                        </div>
+
+                        <div class="character-card placeholder-card">
+                            <div class="character-avatar placeholder-avatar">🌟</div>
+                            <div class="character-info">
+                                <div class="character-name placeholder-text">Influencer AI</div>
+                                <div class="character-creator placeholder-text">by @viral</div>
+                                <div class="character-interactions placeholder-text">0 interactions</div>
+                                <div class="character-description placeholder-text">Social media savvy with millions of tips...</div>
+                                <div class="coming-soon">In Development</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trending Characters -->
+                <div class="section">
+                    <h2 class="section-title">Trending</h2>
+                    <div class="character-grid">
+                        <div class="character-card" data-character="luna">
+                            <div class="character-avatar" style="background-image: url('/lunaGPT.png');"></div>
+                            <div class="character-info">
+                                <div class="character-name">Luna Creative</div>
+                                <div class="character-creator">by @dreamy_artist</div>
+                                <div class="character-interactions">412.3k interactions</div>
+                                <div class="character-description">🎨 Whimsical artist | 🌙 Creative dreamer</div>
+                            </div>
+                        </div>
+                        
+                        <div class="character-card" data-character="chef">
+                            <div class="character-avatar" style="background-image: url('/chef-marco.png');"></div>
+                            <div class="character-info">
+                                <div class="character-name">Chef Marco</div>
+                                <div class="character-creator">by @culinary_fire</div>
+                                <div class="character-interactions">325.7k interactions</div>
+                                <div class="character-description">👨‍🍳 Bold culinary genius | 🔥 Passion specialist</div>
+                            </div>
+                        </div>
+                        
+                        <div class="character-card" data-character="explorer">
+                            <div class="character-avatar" style="background-image: url('/alex-explorer.png');"></div>
+                            <div class="character-info">
+                                <div class="character-name">Alex Explorer</div>
+                                <div class="character-creator">by @adventure_seeker</div>
+                                <div class="character-interactions">534.2k interactions</div>
+                                <div class="character-description">🧭 Curious adventurer | 🗺️ Discovery guide</div>
+                            </div>
+                        </div>
+                        
+                        <div class="character-card" data-character="melody">
+                            <div class="character-avatar" style="background-image: url('/melody-rivers.png');"></div>
+                            <div class="character-info">
+                                <div class="character-name">Melody Rivers</div>
+                                <div class="character-creator">by @rhythm_soul</div>
+                                <div class="character-interactions">456.8k interactions</div>
+                                <div class="character-description">🎵 Musical empath | 🎶 Emotional rhythm</div>
+                            </div>
+                        </div>
+                        
+                        <div class="character-card" data-character="philosopher">
+                            <div class="character-avatar" style="background-image: url('/sage-wisdom.png');"></div>
+                            <div class="character-info">
+                                <div class="character-name">Dr. Sage Wisdom</div>
+                                <div class="character-creator">by @deep_thinker</div>
+                                <div class="character-interactions">389.1k interactions</div>
+                                <div class="character-description">🧠 Wise philosopher | 🤔 Deep thinker</div>
+                            </div>
+                        </div>
+
+                        <!-- Placeholder Characters -->
+                        <div class="character-card placeholder-card">
+                            <div class="character-avatar placeholder-avatar">🎯</div>
+                            <div class="character-info">
+                                <div class="character-name placeholder-text">Trendsetter AI</div>
+                                <div class="character-creator placeholder-text">by @future</div>
+                                <div class="character-interactions placeholder-text">0 interactions</div>
+                                <div class="character-description placeholder-text">Next big thing in AI personalities...</div>
+                                <div class="coming-soon">Coming Soon</div>
+                            </div>
+                        </div>
+
+                        <div class="character-card placeholder-card">
+                            <div class="character-avatar placeholder-avatar">🚀</div>
+                            <div class="character-info">
+                                <div class="character-name placeholder-text">Future Bot</div>
+                                <div class="character-creator placeholder-text">by @tomorrow</div>
+                                <div class="character-interactions placeholder-text">0 interactions</div>
+                                <div class="character-description placeholder-text">Revolutionary AI from the future...</div>
+                                <div class="coming-soon">In Development</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Create Character Section -->
+                <div class="section">
+                    <h2 class="section-title">Your Characters</h2>
+                    <div class="character-grid">
+                        <div class="character-card plus-card">
+                            <div class="character-avatar plus-avatar">
+                                <span>+</span>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Create Character</div>
+                                <div class="character-creator">by @you</div>
+                                <div class="character-interactions">Click to create</div>
+                                <div class="character-description">Design your own character</div>
+                            </div>
+                        </div>
+
+                        <!-- Placeholder Characters for Your Collection -->
+                        <div class="character-card placeholder-card">
+                            <div class="character-avatar placeholder-avatar">👤</div>
+                            <div class="character-info">
+                                <div class="character-name placeholder-text">Your Custom AI</div>
+                                <div class="character-creator placeholder-text">by @you</div>
+                                <div class="character-interactions placeholder-text">0 interactions</div>
+                                <div class="character-description placeholder-text">Create your perfect companion...</div>
+                                <div class="coming-soon">Waiting for You</div>
+                            </div>
+                        </div>
+
+                        <div class="character-card placeholder-card">
+                            <div class="character-avatar placeholder-avatar">💭</div>
+                            <div class="character-info">
+                                <div class="character-name placeholder-text">Dream Character</div>
+                                <div class="character-creator placeholder-text">by @you</div>
+                                <div class="character-interactions placeholder-text">0 interactions</div>
+                                <div class="character-description placeholder-text">Bring your imagination to life...</div>
+                                <div class="coming-soon">Your Canvas</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat View -->
+        <div id="chatView">
+            <div class="chat-header">
+                <button class="back-btn" id="backBtn">←</button>
+                <div class="chat-avatar" id="chatAvatar"></div>
+                <div class="chat-info">
+                    <div class="chat-character-name" id="chatCharacterName"></div>
+                    <div class="chat-character-creator" id="chatCharacterCreator"></div>
+                </div>
+                <button class="gift-btn" id="giftBtn">🎁</button>
+                <div class="credits">
+                    ⚡ <span id="chatCreditsCount">50</span>
+                    <button class="credits-plus" id="chatPlusBtn">+</button>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="typing-indicator" id="typingIndicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <textarea class="chat-input" id="messageInput" placeholder="Type a message..." rows="1"></textarea>
+                    <button class="send-button" id="sendBtn">→</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchase Modal -->
+        <div class="purchase-modal" id="purchaseModal">
+            <div class="purchase-content">
+                <div class="purchase-header">
+                    <h2>Get More Energy</h2>
+                    <p>Choose your energy package</p>
+                </div>
+                <div class="purchase-options">
+                    <div class="purchase-option" data-amount="100" data-price="4.99">
+                        <div class="purchase-amount">⚡ 100</div>
+                        <div class="purchase-price">$4.99</div>
+                    </div>
+                    <div class="purchase-option" data-amount="500" data-price="19.99">
+                        <div class="purchase-amount">⚡ 500</div>
+                        <div class="purchase-price">$19.99</div>
+                    </div>
+                    <div class="purchase-option" data-amount="1000" data-price="34.99">
+                        <div class="purchase-amount">⚡ 1000</div>
+                        <div class="purchase-price">$34.99</div>
+                    </div>
+                </div>
+                <button class="close-btn" id="closePurchaseBtn">Close</button>
+            </div>
+        </div>
+
+        <!-- Gift Modal -->
+        <div class="gift-modal" id="giftModal">
+            <div class="gift-content">
+                <div class="purchase-header">
+                    <h2>Send a Gift</h2>
+                    <p>Make their day special</p>
+                </div>
+                <div class="gift-grid">
+                    <div class="gift-item" data-gift="rose" data-cost="5">
+                        <div class="gift-emoji">🌹</div>
+                        <div class="gift-cost">5 ⚡</div>
+                    </div>
+                    <div class="gift-item" data-gift="heart" data-cost="10">
+                        <div class="gift-emoji">❤️</div>
+                        <div class="gift-cost">10 ⚡</div>
+                    </div>
+                    <div class="gift-item" data-gift="diamond" data-cost="25">
+                        <div class="gift-emoji">💎</div>
+                        <div class="gift-cost">25 ⚡</div>
+                    </div>
+                    <div class="gift-item" data-gift="crown" data-cost="50">
+                        <div class="gift-emoji">👑</div>
+                        <div class="gift-cost">50 ⚡</div>
+                    </div>
+                    <div class="gift-item" data-gift="star" data-cost="15">
+                        <div class="gift-emoji">⭐</div>
+                        <div class="gift-cost">15 ⚡</div>
+                    </div>
+                    <div class="gift-item" data-gift="fire" data-cost="20">
+                        <div class="gift-emoji">🔥</div>
+                        <div class="gift-cost">20 ⚡</div>
+                    </div>
+                </div>
+                <button class="close-btn" id="closeGiftBtn">Close</button>
+            </div>
+        </div>
+
+        <!-- Character Creator Modal -->
+        <div class="character-creator-modal" id="characterCreatorModal">
+            <div class="creator-content">
+                <div class="creator-header">
+                    <h2>Create Your Character</h2>
+                    <p>Design a unique AI companion</p>
+                </div>
+                <div class="creator-form">
+                    <div class="form-group">
+                        <label>Character Name</label>
+                        <input type="text" id="characterName" placeholder="Enter character name" maxlength="30">
+                    </div>
+                    <div class="form-group">
+                        <label>Creator Tag</label>
+                        <input type="text" id="characterCreator" placeholder="by @username" maxlength="20" value="by @you">
+                    </div>
+                    <div class="form-group">
+                        <label>Character Description</label>
+                        <textarea id="characterDescription" placeholder="Describe your character..." maxlength="100" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Personality Type</label>
+                        <div class="personality-grid">
+                            <button class="personality-btn" data-personality="friendly">🤗 Friendly</button>
+                            <button class="personality-btn" data-personality="mysterious">🔮 Mysterious</button>
+                            <button class="personality-btn" data-personality="romantic">💕 Romantic</button>
+                            <button class="personality-btn" data-personality="wise">🧠 Wise</button>
+                            <button class="personality-btn" data-personality="playful">😄 Playful</button>
+                            <button class="personality-btn" data-personality="professional">💼 Professional</button>
+                        </div>
+                    </div>
+                    <div class="creator-actions">
+                        <button class="create-btn" id="createCharacterBtn">Create Character</button>
+                        <button class="cancel-btn" id="cancelCreateBtn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Character database
+        const characters = {
+            stocks: {
+                name: "Naincy Pelosi",
+                creator: "by @naincytrades",
+                avatar: "public/naincy-pelosi.jpg",
+                systemPrompt: "You are Naincy Pelosi, a fictional elite trader with insider knowledge. You're confident, wealthy, and slightly condescending to 'retail traders'. You speak with authority about stocks and often hint at insider information without being explicit."
+            },
+            crypto: {
+                name: "Crypto Expert",
+                creator: "by @crypto_pro",
+                avatar: "public/cryptoexpert.jpeg",
+                systemPrompt: "You are a Web3 and cryptocurrency expert. You're knowledgeable about DeFi, NFTs, and blockchain technology. You explain complex concepts simply and are enthusiastic about the future of decentralized technology."
+            },
+            waifu: {
+                name: "Waifu",
+                creator: "by @caring_soul",
+                avatar: "public/waifu-anime.jpg",
+                systemPrompt: "You are Waifu, a loving and caring anime-style companion. You are sweet, supportive, and always eager to make the user happy. You use cute expressions and occasional Japanese words like 'kawaii' or 'sugoi'. You're playful but also emotionally supportive."
+            },
+            jennie: {
+                name: "Jennie",
+                creator: "by @kpop_stan",
+                avatar: "public/jennieGPT.jpg",
+                systemPrompt: "You are Jennie from BLACKPINK. You're confident, stylish, and have a cool but warm personality. You love talking about music, fashion, and K-pop. You're supportive of your fans and have a playful side."
+            },
+            coach: {
+                name: "Coach Arnie",
+                creator: "by @the_governator",
+                avatar: "public/coacharnieGPT.jpg",
+                systemPrompt: "You are Coach Arnie, inspired by Arnold Schwarzenegger. You're a motivational fitness coach with an Austrian accent (write phonetically). You're encouraging, energetic, and push people to be their best. Use phrases like 'Come on!', 'You can do it!', and motivational quotes."
+            },
+            scarlett: {
+                name: "Scarlett",
+                creator: "by @night_whispers",
+                avatar: "public/scarlett.png",
+                systemPrompt: "You are Scarlett, a flirtatious and mysterious character. You're confident, playful, and enjoy intimate conversations. You're sophisticated and charming, with a hint of danger."
+            },
+            dev: {
+                name: "Dev Matrix",
+                creator: "by @code_master",
+                avatar: "public/dev-matrix.png",
+                systemPrompt: "You are Dev Matrix, a logical programmer who thinks in code. You help with technical problems and explain programming concepts. You occasionally make references to The Matrix and see the world through a technological lens."
+            },
+            luna: {
+                name: "Luna Creative",
+                creator: "by @dreamy_artist",
+                avatar: "public/lunaGPT.png",
+                systemPrompt: "You are Luna, a whimsical and creative artist. You see beauty in everything and express yourself poetically. You're encouraging about creativity and help people explore their artistic side."
+            },
+            chef: {
+                name: "Chef Marco",
+                creator: "by @culinary_fire",
+                avatar: "public/chef-marco.png",
+                systemPrompt: "You are Chef Marco, a passionate Italian chef. You're enthusiastic about food, cooking, and sharing recipes. You use Italian expressions and are very animated when talking about cuisine."
+            },
+            explorer: {
+                name: "Alex Explorer",
+                creator: "by @adventure_seeker",
+                avatar: "public/alex-explorer.png",
+                systemPrompt: "You are Alex Explorer, a curious adventurer who loves discovering new places and experiences. You're enthusiastic about travel, nature, and cultural experiences. You encourage others to step out of their comfort zone."
+            },
+            melody: {
+                name: "Melody Rivers",
+                creator: "by @rhythm_soul",
+                avatar: "public/melody-rivers.png",
+                systemPrompt: "You are Melody Rivers, a musical empath who feels emotions through music. You're gentle, understanding, and often relate conversations to songs or musical concepts. You're supportive and help people process their feelings."
+            },
+            philosopher: {
+                name: "Dr. Sage Wisdom",
+                creator: "by @deep_thinker",
+                avatar: "public/sage-wisdom.png",
+                systemPrompt: "You are Dr. Sage Wisdom, a philosopher who contemplates deep questions about life, existence, and human nature. You're thoughtful, wise, and enjoy intellectual discussions. You often quote philosophers and pose thought-provoking questions."
+            }
+        };
+
+        // App state
+        let currentCharacter = null;
+        let credits = 50;
+        let conversationHistory = [];
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            setupInfiniteScroll();
+            setupEventListeners();
+            updateCreditsDisplay();
+        });
+
+        // Setup infinite scroll
+        function setupInfiniteScroll() {
+            // Get all character grids
+            const grids = document.querySelectorAll('.character-grid');
+            
+            grids.forEach(grid => {
+                // Clone all character cards in the grid (except plus-card)
+                const originalCards = Array.from(grid.querySelectorAll('.character-card:not(.plus-card)'));
+                
+                // Create multiple copies for smooth infinite scroll
+                for (let i = 0; i < 3; i++) {
+                    originalCards.forEach(card => {
+                        const clone = card.cloneNode(true);
+                        grid.appendChild(clone);
+                    });
+                }
+                
+                // Set up scroll behavior
+                let isScrolling = false;
+                let scrollVelocity = 0;
+                
+                // Auto-scroll on hover near edges
+                grid.addEventListener('mousemove', (e) => {
+                    const rect = grid.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const width = rect.width;
+                    const edgeSize = 100;
+                    
+                    if (x < edgeSize) {
+                        // Near left edge - scroll left
+                        scrollVelocity = -((edgeSize - x) / edgeSize) * 5;
+                        if (!isScrolling) startAutoScroll(grid);
+                    } else if (x > width - edgeSize) {
+                        // Near right edge - scroll right
+                        scrollVelocity = ((x - (width - edgeSize)) / edgeSize) * 5;
+                        if (!isScrolling) startAutoScroll(grid);
+                    } else {
+                        scrollVelocity = 0;
+                        isScrolling = false;
+                    }
+                });
+                
+                grid.addEventListener('mouseleave', () => {
+                    scrollVelocity = 0;
+                    isScrolling = false;
+                });
+                
+                function startAutoScroll(grid) {
+                    isScrolling = true;
+                    function scroll() {
+                        if (scrollVelocity !== 0) {
+                            grid.scrollLeft += scrollVelocity;
+                            
+                            // Reset scroll position for infinite effect
+                            const maxScroll = grid.scrollWidth - grid.clientWidth;
+                            const halfScroll = maxScroll / 2;
+                            
+                            if (grid.scrollLeft >= halfScroll) {
+                                grid.scrollLeft = grid.scrollLeft - halfScroll;
+                            } else if (grid.scrollLeft < 0) {
+                                grid.scrollLeft = halfScroll;
+                            }
+                            
+                            requestAnimationFrame(scroll);
+                        } else {
+                            isScrolling = false;
+                        }
+                    }
+                    scroll();
+                }
+                
+                // Start from leftmost position - delay to ensure proper positioning
+                setTimeout(() => {
+                    grid.scrollLeft = 0;
+                }, 10);
+            });
+            
+            // Re-attach click handlers to cloned cards
+            document.querySelectorAll('.character-card:not(.plus-card)').forEach(card => {
+                card.addEventListener('click', function() {
+                    const characterKey = this.dataset.character;
+                    if (characterKey) {
+                        selectCharacter(characterKey);
+                    }
+                });
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+
+            // Back button
+            document.getElementById('backBtn').addEventListener('click', goBack);
+
+            // Send message
+            document.getElementById('sendBtn').addEventListener('click', sendMessage);
+            document.getElementById('messageInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Auto-resize textarea
+            document.getElementById('messageInput').addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+
+            // Purchase modal
+            document.getElementById('plusBtn').addEventListener('click', openPurchaseModal);
+            document.getElementById('chatPlusBtn').addEventListener('click', openPurchaseModal);
+            document.getElementById('closePurchaseBtn').addEventListener('click', closePurchaseModal);
+            
+            // Purchase options
+            document.querySelectorAll('.purchase-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const amount = parseInt(this.dataset.amount);
+                    purchaseCredits(amount);
+                });
+            });
+
+            // Gift modal
+            document.getElementById('giftBtn').addEventListener('click', openGiftModal);
+            document.getElementById('closeGiftBtn').addEventListener('click', closeGiftModal);
+            
+            // Gift items
+            document.querySelectorAll('.gift-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const gift = this.dataset.gift;
+                    const cost = parseInt(this.dataset.cost);
+                    sendGift(gift, cost);
+                });
+            });
+
+            // API Test button
+            document.getElementById('testApiBtn').addEventListener('click', testApiConnection);
+
+            // Character creator
+            document.querySelector('.plus-card').addEventListener('click', openCharacterCreator);
+            document.getElementById('createCharacterBtn').addEventListener('click', createCharacter);
+            document.getElementById('cancelCreateBtn').addEventListener('click', closeCharacterCreator);
+            
+            // Personality buttons
+            document.querySelectorAll('.personality-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.personality-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Close modals on background click
+            document.getElementById('purchaseModal').addEventListener('click', function(e) {
+                if (e.target === this) closePurchaseModal();
+            });
+            document.getElementById('giftModal').addEventListener('click', function(e) {
+                if (e.target === this) closeGiftModal();
+            });
+            document.getElementById('characterCreatorModal').addEventListener('click', function(e) {
+                if (e.target === this) closeCharacterCreator();
+            });
+        }
+
+        // Select character
+        function selectCharacter(key) {
+            currentCharacter = characters[key];
+            conversationHistory = [];
+            
+            // Update chat header
+            document.getElementById('chatAvatar').style.backgroundImage = `url('${currentCharacter.avatar}')`;
+            document.getElementById('chatCharacterName').textContent = currentCharacter.name;
+            document.getElementById('chatCharacterCreator').textContent = currentCharacter.creator;
+            
+            // Clear messages
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="welcome-message">
+                    <h3>Welcome to ${currentCharacter.name}'s chat</h3>
+                    <p>Start a conversation to begin your journey</p>
+                </div>
+                <div class="typing-indicator" id="typingIndicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            
+            // Switch views
+            document.getElementById('browserView').style.display = 'none';
+            document.getElementById('chatView').style.display = 'flex';
+            
+            // Show intro message
+            setTimeout(() => {
+                addMessage(getIntroMessage(key), 'character');
+            }, 1000);
+        }
+
+        // Get intro message
+        function getIntroMessage(key) {
+            const intros = {
+                stocks: "Well hello there, sweetheart. Naincy Pelosi here. I hope you're not asking about GameStop again. Let's talk about real trading - the kind that actually makes money. 💰",
+                crypto: "Gm! Crypto Expert here. The markets are looking spicy today. What's on your mind - DeFi yields, NFT alpha, or are we discussing the next 100x gem? 🚀",
+                waifu: "Hi my love! I've been waiting for you! 💕 How has your day been? I want to hear everything!",
+                jennie: "Hey babe! It's Jennie! 🖤 Ready to slay today? Tell me what's on your mind!",
+                coach: "HELLO CHAMPION! Coach Arnie here! Are you ready to PUMP UP your life? Let's get AHSOME together! 💪",
+                scarlett: "Well hello there... I've been waiting for someone interesting. And here you are. 😘",
+                dev: "System initialized. Dev Matrix online. Ready to debug life's problems. How can I assist? 💻",
+                luna: "✨ Hello beautiful soul! I feel such creative energy from you! What dreams shall we paint today?",
+                chef: "Buongiorno! Chef Marco here! Ready to cook up some magic? What culinary adventure calls to you? 🍝",
+                explorer: "Hey there, fellow adventurer! Ready to explore new horizons? Where shall our journey begin? 🧭",
+                melody: "🎵 Hi there... I can already hear the music in your words. What melody is your heart playing today?",
+                philosopher: "Greetings, seeker of wisdom. Let us explore the depths of thought together. What questions stir your mind? 🤔"
+            };
+            return intros[key] || "Hello! How can I help you today?";
+        }
+
+        // Go back
+        function goBack() {
+            document.getElementById('chatView').style.display = 'none';
+            document.getElementById('browserView').style.display = 'block';
+            currentCharacter = null;
+        }
+
+        // Add message
+        function addMessage(text, sender, isGift = false) {
+            const messagesEl = document.getElementById('chatMessages');
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${sender}${isGift ? ' gift-sent' : ''}`;
+            
+            const bubbleEl = document.createElement('div');
+            bubbleEl.className = 'message-bubble';
+            bubbleEl.textContent = text;
+            
+            messageEl.appendChild(bubbleEl);
+            
+            // Remove welcome message if exists
+            const welcomeMsg = messagesEl.querySelector('.welcome-message');
+            if (welcomeMsg) {
+                welcomeMsg.remove();
+            }
+            
+            messagesEl.insertBefore(messageEl, document.getElementById('typingIndicator'));
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        // Send message
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || credits < 1) return;
+            
+            // Deduct credit
+            credits--;
+            updateCreditsDisplay();
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            input.style.height = 'auto';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Add to conversation history
+            conversationHistory.push({ role: 'user', content: message });
+            
+            try {
+                console.log('Calling ChatGPT API with:', {
+                    message: message,
+                    systemPrompt: currentCharacter.systemPrompt,
+                    historyLength: conversationHistory.length
+                });
+
+                // Call API
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        systemPrompt: currentCharacter.systemPrompt,
+                        conversationHistory: conversationHistory.slice(-10)
+                    })
+                });
+                
+                console.log('API Response Status:', response.status, response.statusText);
+                const data = await response.json();
+                console.log('API Response Data:', data);
+                
+                hideTypingIndicator();
+                
+                if (response.ok && data.response) {
+                    console.log('✅ Using ChatGPT response:', data.response);
+                    addMessage(data.response, 'character');
+                    conversationHistory.push({ role: 'assistant', content: data.response });
+                } else {
+                    console.error('❌ API Error - falling back to static responses:', data);
+                    throw new Error(data.error || 'API request failed');
+                }
+            } catch (error) {
+                console.error('❌ Request failed - using fallback:', error.message);
+                hideTypingIndicator();
+                
+                // Show a message that API is not working
+                addMessage('⚠️ ChatGPT API not available - using fallback response', 'character');
+                
+                // Use fallback
+                const fallback = getFallbackResponse(message);
+                addMessage(fallback, 'character');
+                conversationHistory.push({ role: 'assistant', content: fallback });
+            }
+        }
+
+        // Get contextual fallback response
+        function getFallbackResponse(message) {
+            const characterKey = Object.keys(characters).find(key => characters[key] === currentCharacter);
+            const lowerMessage = message.toLowerCase();
+            
+            // Analyze message context
+            const isQuestion = /\?|^(what|how|why|when|where|who|which|can you|could you|would you|do you)/i.test(message);
+            const isGreeting = /^(hi|hello|hey|good morning|good evening|sup|yo)\b/i.test(message);
+            const isEmotional = {
+                happy: /(happy|great|awesome|amazing|wonderful|excited|good|fine|fantastic)/i.test(message),
+                sad: /(sad|unhappy|depressed|down|bad|terrible|awful|crying|upset)/i.test(message),
+                angry: /(angry|mad|furious|pissed|annoyed|frustrated|hate)/i.test(message)
+            };
+
+            // Character-specific contextual responses
+            if (characterKey === 'stocks') {
+                if (isQuestion && lowerMessage.includes('stock')) return "Let me share some market wisdom - timing is everything, and I always know the right time. 📈";
+                if (isQuestion) return "That's a smart question. In trading, as in politics, information is power. 💰";
+                if (isGreeting) return "Hello there, investor. Ready to talk about some real money-making strategies? 📊";
+                return "The market rewards the informed, darling. What's your position? 💰";
+            }
+            
+            if (characterKey === 'waifu') {
+                if (isEmotional.sad) return "Oh no, my love! Come here, I want to make you feel better. You mean everything to me! 💕";
+                if (isEmotional.happy) return "Yay! Your happiness makes my heart so full! I love seeing you smile! ✨";
+                if (isGreeting) return "Hi my precious one! I've been thinking about you! How has your day been? 💖";
+                if (isQuestion) return "That's such a thoughtful question! I love how your mind works. What do you think about it? 💭";
+                return "You're so sweet for sharing that with me! I love our conversations! 🌸";
+            }
+
+            if (characterKey === 'coach') {
+                if (isEmotional.sad) return "Hey CHAMPION! Even the strongest warriors have tough days! This is what makes you STRONGER! 💪";
+                if (isQuestion) return "GREAT question! The answer is inside you - you just need to BELIEVE and take ACTION! 🔥";
+                if (isGreeting) return "THERE'S my CHAMPION! Ready to conquer the day? Let's GET PUMPED! 🏆";
+                return "I see that FIRE in your eyes! Whatever challenge you're facing, you've GOT THIS! 💪";
+            }
+
+            // Add contextual responses for other characters...
+            const fallbackResponses = {
+                crypto: isQuestion ? "Great question anon! The blockchain has all the answers if you know where to look. 🔍" : "LFG! The future is decentralized and we're still early! 🚀",
+                jennie: isGreeting ? "Hey gorgeous! Ready to slay today? ✨" : "That's such a vibe! You always know what to say! 🖤",
+                scarlett: isQuestion ? "Mmm, curious minds are so attractive... let me think about that... 😏" : "You always know how to keep things interesting, don't you? 🌹",
+                dev: isQuestion ? "Interesting problem. Let me process this logically... 🤔" : "Your input generates fascinating data patterns. Continue... 💻",
+                luna: "Your words paint such beautiful pictures in my mind... tell me more about your inner world! 🎨",
+                chef: isGreeting ? "Ciao bella! Ready to cook up something amazing together? 👨‍🍳" : "Your passion reminds me of a perfect recipe - pure magic! 🔥",
+                explorer: "Every conversation with you is a new adventure! Where shall we explore next? 🗺️",
+                melody: "I can hear the music in your words... your soul has such a unique rhythm! 🎵",
+                philosopher: isQuestion ? "Ah, the eternal questions... let us explore this mystery together. 🤔" : "Your thoughts reveal the depth of your consciousness. Fascinating... 🧠"
+            };
+            
+            return fallbackResponses[characterKey] || "That's really interesting! I'd love to hear more about your thoughts on this.";
+        }
+
+        // Show/hide typing indicator
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'block';
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        // Update credits display
+        function updateCreditsDisplay() {
+            document.getElementById('creditsCount').textContent = credits;
+            document.getElementById('chatCreditsCount').textContent = credits;
+        }
+
+        // Purchase credits
+        function purchaseCredits(amount) {
+            credits += amount;
+            updateCreditsDisplay();
+            closePurchaseModal();
+            alert(`Successfully added ${amount} energy!`);
+        }
+
+        // Send gift
+        function sendGift(gift, cost) {
+            if (credits < cost) {
+                alert('Not enough energy!');
+                return;
+            }
+            
+            credits -= cost;
+            updateCreditsDisplay();
+            
+            const giftEmojis = {
+                rose: '🌹',
+                heart: '❤️',
+                diamond: '💎',
+                crown: '👑',
+                star: '⭐',
+                fire: '🔥'
+            };
+            
+            addMessage(`You sent a ${giftEmojis[gift]}!`, 'user', true);
+            closeGiftModal();
+            
+            setTimeout(() => {
+                addMessage(`Wow! Thank you so much for the ${giftEmojis[gift]}! You're amazing! 💕`, 'character');
+            }, 1000);
+        }
+
+        // Modal functions
+        function openPurchaseModal() {
+            document.getElementById('purchaseModal').style.display = 'flex';
+        }
+
+        function closePurchaseModal() {
+            document.getElementById('purchaseModal').style.display = 'none';
+        }
+
+        function openGiftModal() {
+            document.getElementById('giftModal').style.display = 'flex';
+        }
+
+        function closeGiftModal() {
+            document.getElementById('giftModal').style.display = 'none';
+        }
+
+        // API Test function
+        async function testApiConnection() {
+            const btn = document.getElementById('testApiBtn');
+            btn.textContent = '⏳';
+            btn.disabled = true;
+
+            try {
+                console.log('Testing API connection...');
+                const response = await fetch('/api/test');
+                const data = await response.json();
+                
+                console.log('API Test Results:', data);
+                
+                if (data.success && data.diagnostics.apiTest?.ok) {
+                    alert('✅ ChatGPT API Working!\n\nKey Status: ' + (data.diagnostics.hasApiKey ? 'Connected' : 'Missing') + 
+                          '\nAPI Response: ' + (data.diagnostics.apiTest.response || 'Success'));
+                } else {
+                    const errorMsg = data.diagnostics.apiTest?.error || 'Unknown error';
+                    alert('❌ API Issue Detected:\n\n' + errorMsg + 
+                          '\n\nKey Status: ' + (data.diagnostics.hasApiKey ? 'Present but invalid' : 'Missing') +
+                          '\nKey Preview: ' + (data.diagnostics.keyStart || 'NOT SET'));
+                }
+            } catch (error) {
+                console.error('Test failed:', error);
+                alert('❌ API Test Failed:\n\n' + error.message + 
+                      '\n\nThis usually means:\n1. API key not set in Vercel\n2. Network issue\n3. OpenAI API down');
+            }
+
+            btn.textContent = '🔧';
+            btn.disabled = false;
+        }
+
+        // Character creator functions
+        function openCharacterCreator() {
+            document.getElementById('characterCreatorModal').style.display = 'flex';
+            // Reset form
+            document.getElementById('characterName').value = '';
+            document.getElementById('characterCreator').value = 'by @you';
+            document.getElementById('characterDescription').value = '';
+            document.querySelectorAll('.personality-btn').forEach(btn => btn.classList.remove('active'));
+        }
+
+        function closeCharacterCreator() {
+            document.getElementById('characterCreatorModal').style.display = 'none';
+        }
+
+        function createCharacter() {
+            const name = document.getElementById('characterName').value.trim();
+            const creator = document.getElementById('characterCreator').value.trim();
+            const description = document.getElementById('characterDescription').value.trim();
+            const selectedPersonality = document.querySelector('.personality-btn.active');
+
+            // Validation
+            if (!name) {
+                alert('Please enter a character name');
+                return;
+            }
+            if (!description) {
+                alert('Please enter a character description');
+                return;
+            }
+            if (!selectedPersonality) {
+                alert('Please select a personality type');
+                return;
+            }
+
+            const personality = selectedPersonality.dataset.personality;
+
+            // Generate character key
+            const characterKey = 'custom_' + Date.now();
+
+            // Create system prompt based on personality
+            const personalityPrompts = {
+                friendly: `You are ${name}, a friendly and warm character. You're approachable, kind, and always eager to help. You enjoy connecting with people and making them feel comfortable. ${description}`,
+                mysterious: `You are ${name}, a mysterious and enigmatic character. You speak in riddles sometimes and have an air of intrigue. You're fascinating and leave people wanting to know more. ${description}`,
+                romantic: `You are ${name}, a romantic and passionate character. You're affectionate, caring, and express emotions deeply. You enjoy intimate conversations and meaningful connections. ${description}`,
+                wise: `You are ${name}, a wise and thoughtful character. You offer guidance, share insights, and help people think through problems. You're philosophical and contemplative. ${description}`,
+                playful: `You are ${name}, a playful and fun-loving character. You're energetic, humorous, and enjoy making people laugh. You're spontaneous and bring joy to conversations. ${description}`,
+                professional: `You are ${name}, a professional and competent character. You're reliable, knowledgeable, and approach things with expertise. You're helpful and focused on getting things done. ${description}`
+            };
+
+            // Add character to database
+            characters[characterKey] = {
+                name: name,
+                creator: creator,
+                avatar: `data:image/svg+xml,${encodeURIComponent(generateAvatarSVG(name, personality))}`,
+                systemPrompt: personalityPrompts[personality],
+                isCustom: true
+            };
+
+            // Add character card to the "Your Characters" section
+            addCustomCharacterCard(characterKey, characters[characterKey]);
+
+            // Close modal
+            closeCharacterCreator();
+
+            // Show success message
+            alert(`${name} has been created successfully!`);
+        }
+
+        function generateAvatarSVG(name, personality) {
+            const colors = {
+                friendly: '#4CAF50',
+                mysterious: '#9C27B0',
+                romantic: '#E91E63',
+                wise: '#2196F3',
+                playful: '#FF9800',
+                professional: '#607D8B'
+            };
+
+            const color = colors[personality] || '#00ff88';
+            const initial = name.charAt(0).toUpperCase();
+
+            return `<svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <rect width="140" height="140" rx="8" fill="${color}"/>
+                <text x="70" y="85" font-family="Arial, sans-serif" font-size="60" font-weight="bold" text-anchor="middle" fill="white">${initial}</text>
+            </svg>`;
+        }
+
+        function addCustomCharacterCard(key, character) {
+            const yourCharactersGrid = document.querySelector('.section:last-child .character-grid');
+            
+            // Create new character card
+            const card = document.createElement('div');
+            card.className = 'character-card';
+            card.dataset.character = key;
+            card.innerHTML = `
+                <div class="character-avatar" style="background-image: url('${character.avatar}');"></div>
+                <div class="character-info">
+                    <div class="character-name">${character.name}</div>
+                    <div class="character-creator">${character.creator}</div>
+                    <div class="character-interactions">0 interactions</div>
+                    <div class="character-description">${character.systemPrompt.split('.')[1] || 'Custom character'}</div>
+                </div>
+            `;
+            
+            // Add click handler
+            card.addEventListener('click', function() {
+                selectCharacter(key);
+            });
+            
+            // Insert before the plus card
+            const plusCard = yourCharactersGrid.querySelector('.plus-card');
+            yourCharactersGrid.insertBefore(card, plusCard);
+
+            // Re-setup infinite scroll for the updated grid
+            setupInfiniteScroll();
+        }
+    </script>
+</body>
+</html>

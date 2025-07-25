@@ -1215,14 +1215,64 @@
 
         // App state
         let currentCharacter = null;
-        let credits = 50;
+        // Credit system with daily limits and replenishment
+        let creditData = {
+            credits: 20,
+            lastReplenishment: Date.now(),
+            dailyCreditsUsed: 0,
+            dailyResetTime: Date.now() + (24 * 60 * 60 * 1000) // 24 hours from now
+        };
+
+        // Load credit data from localStorage
+        function loadCreditData() {
+            const saved = localStorage.getItem('friendgpt_credits');
+            if (saved) {
+                creditData = JSON.parse(saved);
+                checkDailyReset();
+                checkReplenishment();
+            }
+        }
+
+        // Save credit data to localStorage
+        function saveCreditData() {
+            localStorage.setItem('friendgpt_credits', JSON.stringify(creditData));
+        }
+
+        // Check if daily reset is needed (24 hours)
+        function checkDailyReset() {
+            if (Date.now() >= creditData.dailyResetTime) {
+                creditData.dailyCreditsUsed = 0;
+                creditData.dailyResetTime = Date.now() + (24 * 60 * 60 * 1000);
+                saveCreditData();
+            }
+        }
+
+        // Check if replenishment is due (20 hours)
+        function checkReplenishment() {
+            const timeSinceLastReplenishment = Date.now() - creditData.lastReplenishment;
+            const replenishmentInterval = 20 * 60 * 60 * 1000; // 20 hours
+            
+            if (timeSinceLastReplenishment >= replenishmentInterval && creditData.credits < 20) {
+                const creditsToAdd = Math.min(20 - creditData.credits, 20);
+                creditData.credits += creditsToAdd;
+                creditData.lastReplenishment = Date.now();
+                saveCreditData();
+            }
+        }
         let conversationHistory = [];
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
+            loadCreditData();
             setupInfiniteScroll();
             setupEventListeners();
             updateCreditsDisplay();
+            
+            // Check for replenishment every minute
+            setInterval(() => {
+                checkReplenishment();
+                updateCreditsDisplay();
+            }, 60000);
         });
 
         // Setup infinite scroll
@@ -1427,10 +1477,12 @@
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
             
-            if (!message || credits < 1) return;
+            if (!message || creditData.credits < 1 || creditData.dailyCreditsUsed >= 20) return;
             
             // Deduct credit
-            credits--;
+            creditData.credits--;
+            creditData.dailyCreditsUsed++;
+            saveCreditData();
             updateCreditsDisplay();
             
             // Add user message
@@ -1557,13 +1609,23 @@
 
         // Update credits display
         function updateCreditsDisplay() {
-            document.getElementById('creditsCount').textContent = credits;
-            document.getElementById('chatCreditsCount').textContent = credits;
+            document.getElementById('creditsCount').textContent = creditData.credits;
+            document.getElementById('chatCreditsCount').textContent = creditData.credits;
+            
+            // Show daily limit warning if needed
+            if (creditData.dailyCreditsUsed >= 20) {
+                document.getElementById('creditsCount').style.color = '#ff6666';
+                document.getElementById('chatCreditsCount').style.color = '#ff6666';
+            } else {
+                document.getElementById('creditsCount').style.color = '#00ff88';
+                document.getElementById('chatCreditsCount').style.color = '#00ff88';
+            }
         }
 
         // Purchase credits
         function purchaseCredits(amount) {
-            credits += amount;
+            creditData.credits += amount;
+            saveCreditData();
             updateCreditsDisplay();
             closePurchaseModal();
             alert(`Successfully added ${amount} energy!`);
@@ -1571,12 +1633,14 @@
 
         // Send gift
         function sendGift(gift, cost) {
-            if (credits < cost) {
-                alert('Not enough energy!');
+            if (creditData.credits < cost || creditData.dailyCreditsUsed >= 20) {
+                alert('Not enough energy or daily limit reached!');
                 return;
             }
             
-            credits -= cost;
+            creditData.credits -= cost;
+            creditData.dailyCreditsUsed += cost;
+            saveCreditData();
             updateCreditsDisplay();
             
             const giftEmojis = {

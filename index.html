@@ -365,16 +365,6 @@
             flex-shrink: 0;
         }
 
-        .message.user .message-avatar {
-            background-color: #00ff88;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: #000;
-            font-weight: bold;
-        }
-
         .message-bubble {
             max-width: 70%;
             padding: 10px 14px;
@@ -1405,21 +1395,18 @@
             const messageEl = document.createElement('div');
             messageEl.className = `message ${sender}${isGift ? ' gift-sent' : ''}`;
             
-            // Add avatar
-            const avatarEl = document.createElement('div');
-            avatarEl.className = 'message-avatar';
-            
-            if (sender === 'user') {
-                avatarEl.textContent = 'U';
-            } else {
+            // Add avatar only for character messages
+            if (sender === 'character') {
+                const avatarEl = document.createElement('div');
+                avatarEl.className = 'message-avatar';
                 avatarEl.style.backgroundImage = `url('${currentCharacter.avatar}')`;
+                messageEl.appendChild(avatarEl);
             }
             
             const bubbleEl = document.createElement('div');
             bubbleEl.className = 'message-bubble';
             bubbleEl.textContent = text;
             
-            messageEl.appendChild(avatarEl);
             messageEl.appendChild(bubbleEl);
             
             // Remove welcome message if exists

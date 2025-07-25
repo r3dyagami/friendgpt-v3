@@ -1150,7 +1150,7 @@
                     <img src="/FriendGPT-3.jpg" alt="FriendGPT Logo" class="header-logo">
                     <div class="header-text">
                         <h1 class="header-title">FriendGPT</h1>
-                        <p class="header-subtitle">Chat with friends you've always wanted</p>
+                        <p class="header-subtitle" id="friendgptSubtitle">Chat with friends you've always wanted</p>
                     </div>
                 </div>
             </div>
@@ -1559,6 +1559,7 @@
                 clickToCreate: "Click to create",
                 energy: "Energy",
                 interactions: "interactions",
+                friendgptSubtitle: "Chat with friends you've always wanted",
                 // Character descriptions
                 nancyDesc: "📈 Capitol's elite trader | 💰 Insider access",
                 cryptoDesc: "₿ Web3 VC analyst | 🚀 DeFi specialist",
@@ -1614,6 +1615,7 @@
                 clickToCreate: "クリックして作成",
                 energy: "エナジー",
                 interactions: "インタラクション",
+                friendgptSubtitle: "いつも欲しかった友達とチャット",
                 // Character descriptions
                 nancyDesc: "📈 議会のエリートトレーダー | 💰 インサイダーアクセス",
                 cryptoDesc: "₿ Web3 VCアナリスト | 🚀 DeFiスペシャリスト",
@@ -1669,6 +1671,7 @@
                 clickToCreate: "点击创建",
                 energy: "能量",
                 interactions: "互动",
+                friendgptSubtitle: "与你一直想要的朋友聊天",
                 // Character descriptions
                 nancyDesc: "📈 国会精英交易员 | 💰 内幕渠道",
                 cryptoDesc: "₿ Web3 VC分析师 | 🚀 DeFi专家",
@@ -2600,6 +2603,10 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             document.querySelectorAll('.interactions-text').forEach(el => {
                 el.textContent = t('interactions');
             });
+            
+            // Update FriendGPT subtitle
+            const subtitleEl = document.getElementById('friendgptSubtitle');
+            if (subtitleEl) subtitleEl.textContent = t('friendgptSubtitle');
         }
 
         function createCharacter() {

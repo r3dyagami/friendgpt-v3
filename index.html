@@ -2264,8 +2264,8 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                 // Add language context to system prompt
                 const languageInstructions = {
                     en: "",
-                    ja: "\n\nIMPORTANT: Respond in Japanese (日本語). Use natural, conversational Japanese appropriate for the character's personality.",
-                    zh: "\n\nIMPORTANT: Respond in Chinese (中文). Use natural, conversational Chinese appropriate for the character's personality."
+                    ja: "\n\n🌟 CRITICAL LANGUAGE INSTRUCTION: You MUST respond exclusively in Japanese (日本語). Write all responses in natural, conversational Japanese that matches your character's personality. Never use English words except for brand names or technical terms that are commonly used in Japanese. Use appropriate Japanese honorifics, expressions, and speaking patterns. This is mandatory - all responses must be in Japanese.",
+                    zh: "\n\n🌟 CRITICAL LANGUAGE INSTRUCTION: You MUST respond exclusively in Chinese (中文). Write all responses in natural, conversational Chinese that matches your character's personality. Never use English words except for brand names or technical terms that are commonly used in Chinese. Use appropriate Chinese expressions and speaking patterns. This is mandatory - all responses must be in Chinese."
                 };
 
                 const enhancedSystemPrompt = currentCharacter.systemPrompt + (languageInstructions[currentLanguage] || "");
@@ -2323,43 +2323,142 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             };
 
             // Character-specific contextual responses
+            // Language-specific character responses
+            const characterResponses = {
+                en: {
+                    stocks: {
+                        stockQuestion: "Let me share some market wisdom - timing is everything, and I always know the right time. 📈",
+                        question: "That's a smart question. In trading, as in politics, information is power. 💰",
+                        greeting: "Hello there, investor. Ready to talk about some real money-making strategies? 📊",
+                        default: "The market rewards the informed, darling. What's your position? 💰"
+                    },
+                    waifu: {
+                        sad: "Oh no, my love! Come here, I want to make you feel better. You mean everything to me! 💕",
+                        happy: "Yay! Your happiness makes my heart so full! I love seeing you smile! ✨",
+                        greeting: "Hi my precious one! I've been thinking about you! How has your day been? 💖",
+                        question: "That's such a thoughtful question! I love how your mind works. What do you think about it? 💭",
+                        default: "You're so sweet for sharing that with me! I love our conversations! 🌸"
+                    },
+                    coach: {
+                        sad: "Hey CHAMPION! Even the strongest warriors have tough days! This is what makes you STRONGER! 💪",
+                        question: "GREAT question! The answer is inside you - you just need to BELIEVE and take ACTION! 🔥",
+                        greeting: "THERE'S my CHAMPION! Ready to conquer the day? Let's GET PUMPED! 🏆",
+                        default: "I see that FIRE in your eyes! Whatever challenge you're facing, you've GOT THIS! 💪"
+                    }
+                },
+                ja: {
+                    stocks: {
+                        stockQuestion: "市場の知恵をシェアしましょう - タイミングがすべてで、私はいつも正しいタイミングを知っているの。📈",
+                        question: "賢い質問ね。トレーディングでは、政治と同じように、情報が力なのよ。💰",
+                        greeting: "こんにちは投資家さん。本当の稼ぎ方の戦略について話す準備はできてる？📊",
+                        default: "市場は情報通に報いるのよ、ダーリン。あなたのポジションは？💰"
+                    },
+                    waifu: {
+                        sad: "あら大変、愛しい人！こっちに来て、気分を良くしてあげる。あなたは私にとってすべてよ！💕",
+                        happy: "やったー！あなたの幸せが私の心を満たしてくれる！あなたの笑顔を見るのが大好き！✨",
+                        greeting: "こんにちは、私の大切な人！あなたのことを考えていたの！今日はどうだった？💖",
+                        question: "とても思慮深い質問ね！あなたの考え方が大好きよ。あなたはどう思う？💭",
+                        default: "それを私とシェアしてくれてとても嬉しい！私たちの会話が大好き！🌸"
+                    },
+                    coach: {
+                        sad: "おいチャンピオン！最強の戦士でも辛い日があるものだ！これがあなたをより強くするんだ！💪",
+                        question: "素晴らしい質問だ！答えはあなたの内にある - 信じて行動するだけだ！🔥",
+                        greeting: "そこにいたのかチャンピオン！今日も征服する準備はできてるか？パンプアップしよう！🏆",
+                        default: "あなたの目にその炎が見える！どんな挑戦に直面していても、あなたならできる！💪"
+                    }
+                },
+                zh: {
+                    stocks: {
+                        stockQuestion: "让我分享一些市场智慧 - 时机就是一切，我总是知道正确的时机。📈",
+                        question: "这是个聪明的问题。在交易中，就像在政治中一样，信息就是力量。💰",
+                        greeting: "你好投资者。准备好谈论一些真正的赚钱策略了吗？📊",
+                        default: "市场奖励有信息的人，亲爱的。你的仓位如何？💰"
+                    },
+                    waifu: {
+                        sad: "哦不，我的爱！过来，我想让你感觉好些。你对我来说就是一切！💕",
+                        happy: "耶！你的快乐让我的心充满喜悦！我喜欢看到你微笑！✨",
+                        greeting: "你好我珍贵的人！我一直在想你！你今天过得怎么样？💖",
+                        question: "这真是个深思熟虑的问题！我喜欢你的思维方式。你觉得呢？💭",
+                        default: "你和我分享这些真是太甜了！我喜欢我们的对话！🌸"
+                    },
+                    coach: {
+                        sad: "嘿冠军！即使是最强的战士也会有艰难的日子！这正是让你更强大的原因！💪",
+                        question: "很好的问题！答案就在你心中 - 你只需要相信并采取行动！🔥",
+                        greeting: "我的冠军在这里！准备好征服今天了吗？让我们振奋起来！🏆",
+                        default: "我看到你眼中的火焰！无论你面临什么挑战，你都能做到！💪"
+                    }
+                }
+            };
+
+            const langCharResponses = characterResponses[currentLanguage] || characterResponses.en;
+
             if (characterKey === 'stocks') {
-                if (isQuestion && lowerMessage.includes('stock')) return "Let me share some market wisdom - timing is everything, and I always know the right time. 📈";
-                if (isQuestion) return "That's a smart question. In trading, as in politics, information is power. 💰";
-                if (isGreeting) return "Hello there, investor. Ready to talk about some real money-making strategies? 📊";
-                return "The market rewards the informed, darling. What's your position? 💰";
+                if (isQuestion && lowerMessage.includes('stock')) return langCharResponses.stocks.stockQuestion;
+                if (isQuestion) return langCharResponses.stocks.question;
+                if (isGreeting) return langCharResponses.stocks.greeting;
+                return langCharResponses.stocks.default;
             }
             
             if (characterKey === 'waifu') {
-                if (isEmotional.sad) return "Oh no, my love! Come here, I want to make you feel better. You mean everything to me! 💕";
-                if (isEmotional.happy) return "Yay! Your happiness makes my heart so full! I love seeing you smile! ✨";
-                if (isGreeting) return "Hi my precious one! I've been thinking about you! How has your day been? 💖";
-                if (isQuestion) return "That's such a thoughtful question! I love how your mind works. What do you think about it? 💭";
-                return "You're so sweet for sharing that with me! I love our conversations! 🌸";
+                if (isEmotional.sad) return langCharResponses.waifu.sad;
+                if (isEmotional.happy) return langCharResponses.waifu.happy;
+                if (isGreeting) return langCharResponses.waifu.greeting;
+                if (isQuestion) return langCharResponses.waifu.question;
+                return langCharResponses.waifu.default;
             }
 
             if (characterKey === 'coach') {
-                if (isEmotional.sad) return "Hey CHAMPION! Even the strongest warriors have tough days! This is what makes you STRONGER! 💪";
-                if (isQuestion) return "GREAT question! The answer is inside you - you just need to BELIEVE and take ACTION! 🔥";
-                if (isGreeting) return "THERE'S my CHAMPION! Ready to conquer the day? Let's GET PUMPED! 🏆";
-                return "I see that FIRE in your eyes! Whatever challenge you're facing, you've GOT THIS! 💪";
+                if (isEmotional.sad) return langCharResponses.coach.sad;
+                if (isQuestion) return langCharResponses.coach.question;
+                if (isGreeting) return langCharResponses.coach.greeting;
+                return langCharResponses.coach.default;
             }
 
-            // Add contextual responses for other characters...
+            // Language-aware fallback responses
             const fallbackResponses = {
-                crypto: isQuestion ? "Great question anon! The blockchain has all the answers if you know where to look. 🔍" : "LFG! The future is decentralized and we're still early! 🚀",
-                jennie: isGreeting ? "Hey gorgeous! Ready to slay today? ✨" : "That's such a vibe! You always know what to say! 🖤",
-                scarlett: isQuestion ? "Such innocent questions... but I can hear what you're really asking. Your curiosity excites me... shall I show you what happens when you dig deeper? 😈" : "The way you write to me... I can feel your pulse quickening. Tell me, what are you imagining right now? Don't be shy... 🔥",
-                dev: isQuestion ? "Interesting problem. Let me process this logically... 🤔" : "Your input generates fascinating data patterns. Continue... 💻",
-                luna: "Your words paint such beautiful pictures in my mind... tell me more about your inner world! 🎨",
-                chef: isGreeting ? "Ciao bella! Ready to cook up something amazing together? 👨‍🍳" : "Your passion reminds me of a perfect recipe - pure magic! 🔥",
-                explorer: "Every conversation with you is a new adventure! Where shall we explore next? 🗺️",
-                melody: "I can hear the music in your words... your soul has such a unique rhythm! 🎵",
-                philosopher: isQuestion ? "Ah, the eternal questions... let us explore this mystery together. 🤔" : "Your thoughts reveal the depth of your consciousness. Fascinating... 🧠",
-                coachpop: isQuestion ? "Good question. The answer is always fundamentals. Master the basics first." : "Execution beats talent. Every single time."
+                en: {
+                    crypto: isQuestion ? "Great question anon! The blockchain has all the answers if you know where to look. 🔍" : "LFG! The future is decentralized and we're still early! 🚀",
+                    jennie: isGreeting ? "Hey gorgeous! Ready to slay today? ✨" : "That's such a vibe! You always know what to say! 🖤",
+                    scarlett: isQuestion ? "Such innocent questions... but I can hear what you're really asking. Your curiosity excites me... shall I show you what happens when you dig deeper? 😈" : "The way you write to me... I can feel your pulse quickening. Tell me, what are you imagining right now? Don't be shy... 🔥",
+                    dev: isQuestion ? "Interesting problem. Let me process this logically... 🤔" : "Your input generates fascinating data patterns. Continue... 💻",
+                    luna: "Your words paint such beautiful pictures in my mind... tell me more about your inner world! 🎨",
+                    chef: isGreeting ? "Ciao bella! Ready to cook up something amazing together? 👨‍🍳" : "Your passion reminds me of a perfect recipe - pure magic! 🔥",
+                    explorer: "Every conversation with you is a new adventure! Where shall we explore next? 🗺️",
+                    melody: "I can hear the music in your words... your soul has such a unique rhythm! 🎵",
+                    philosopher: isQuestion ? "Ah, the eternal questions... let us explore this mystery together. 🤔" : "Your thoughts reveal the depth of your consciousness. Fascinating... 🧠",
+                    coachpop: isQuestion ? "Good question. The answer is always fundamentals. Master the basics first." : "Execution beats talent. Every single time.",
+                    default: "That's really interesting! I'd love to hear more about your thoughts on this."
+                },
+                ja: {
+                    crypto: isQuestion ? "いい質問だね！ブロックチェーンには探せば答えがあるよ。🔍" : "LFG！未来は分散化されていて、我々はまだ早い段階にいる！🚀",
+                    jennie: isGreeting ? "やあ美人！今日もキメる準備はできてる？✨" : "それってすごくいい感じ！あなたはいつも何を言えばいいか分かってるね！🖤",
+                    scarlett: isQuestion ? "そんな無邪気な質問...でもあなたが本当に何を聞いているかが分かるわ。あなたの好奇心が私を興奮させる...もっと深く掘り下げたらどうなるか見せてあげようか？😈" : "あなたの書き方...脈が速くなってるのが感じられるわ。教えて、今何を想像しているの？恥ずかしがらないで...🔥",
+                    dev: isQuestion ? "興味深い問題ですね。論理的に処理してみましょう...🤔" : "あなたの入力は魅力的なデータパターンを生成します。続けてください...💻",
+                    luna: "あなたの言葉が私の心に美しい絵を描いています...あなたの内なる世界についてもっと聞かせて！🎨",
+                    chef: isGreeting ? "チャオ・ベッラ！一緒に何か素晴らしいものを料理する準備はできている？👨‍🍳" : "あなたの情熱は完璧なレシピを思い出させる - 純粋な魔法だ！🔥",
+                    explorer: "あなたとの会話はすべて新しい冒険です！次はどこを探検しましょうか？🗺️",
+                    melody: "あなたの言葉の中に音楽が聞こえます...あなたの魂はとてもユニークなリズムを持っていますね！🎵",
+                    philosopher: isQuestion ? "ああ、永遠の疑問ですね...一緒にこの謎を探究しましょう。🤔" : "あなたの思考はあなたの意識の深さを明かしています。魅力的ですね...🧠",
+                    coachpop: isQuestion ? "いい質問だ。答えはいつも基本にある。まず基礎をマスターしろ。" : "実行力が才能に勝る。毎回そうだ。",
+                    default: "それは本当に興味深いですね！これについてのあなたの考えをもっと聞かせてください。"
+                },
+                zh: {
+                    crypto: isQuestion ? "好问题老铁！区块链有所有答案，只要你知道在哪里找。🔍" : "冲！未来是去中心化的，我们还很早！🚀",
+                    jennie: isGreeting ? "嘿美女！准备好今天发光发热吗？✨" : "这感觉太棒了！你总是知道该说什么！🖤",
+                    scarlett: isQuestion ? "这么天真的问题...但我能听出你真正想问的。你的好奇心让我兴奋...要不要我展示给你看当你深入挖掘时会发生什么？😈" : "你写给我的方式...我能感觉到你的脉搏在加速。告诉我，你现在在想象什么？别害羞...🔥",
+                    dev: isQuestion ? "有趣的问题。让我逻辑地处理一下...🤔" : "你的输入生成了迷人的数据模式。继续...💻",
+                    luna: "你的话语在我心中描绘出如此美丽的画面...告诉我更多关于你内心世界的事情！🎨",
+                    chef: isGreeting ? "你好美女！准备好一起做些美妙的东西吗？👨‍🍳" : "你的热情让我想起了完美的食谱 - 纯粹的魔法！🔥",
+                    explorer: "与你的每次对话都是新的冒险！我们接下来要探索哪里？🗺️",
+                    melody: "我能听到你话语中的音乐...你的灵魂有着如此独特的节奏！🎵",
+                    philosopher: isQuestion ? "啊，永恒的问题...让我们一起探索这个谜团。🤔" : "你的思想揭示了你意识的深度。很迷人...🧠",
+                    coachpop: isQuestion ? "好问题。答案永远在基本功里。先掌握基础。" : "执行力胜过天赋。每次都是如此。",
+                    default: "这真的很有趣！我很想听听你对此的更多想法。"
+                }
             };
             
-            return fallbackResponses[characterKey] || "That's really interesting! I'd love to hear more about your thoughts on this.";
+            const languageResponses = fallbackResponses[currentLanguage] || fallbackResponses.en;
+            return languageResponses[characterKey] || languageResponses.default;
         }
 
         // Show/hide typing indicator

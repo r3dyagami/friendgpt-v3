@@ -1046,6 +1046,82 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
+        /* Delete Confirmation Modal */
+        .delete-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-content {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 320px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .delete-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .delete-content h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .delete-content p {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .delete-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .delete-cancel-btn,
+        .delete-confirm-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .delete-cancel-btn {
+            background: #333;
+            color: #fff;
+        }
+
+        .delete-cancel-btn:hover {
+            background: #444;
+        }
+
+        .delete-confirm-btn {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .delete-confirm-btn:hover {
+            background: #ff3333;
+        }
+
         /* Light Theme */
         body.light-theme {
             background: #f5f5f5;
@@ -1252,6 +1328,32 @@
 
         body.light-theme .history-list::-webkit-scrollbar-thumb:hover {
             background: rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme .delete-modal {
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        body.light-theme .delete-content {
+            background: #fff;
+            border-color: #e0e0e0;
+        }
+
+        body.light-theme .delete-content h3 {
+            color: #333;
+        }
+
+        body.light-theme .delete-content p {
+            color: #666;
+        }
+
+        body.light-theme .delete-cancel-btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        body.light-theme .delete-cancel-btn:hover {
+            background: #e0e0e0;
         }
 
         body.light-theme .form-group label,
@@ -1840,6 +1942,19 @@
                 </div>
             </div>
         </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="delete-modal" id="deleteModal">
+            <div class="delete-content">
+                <div class="delete-icon">🗑️</div>
+                <h3 id="deleteModalTitle">Delete Conversation?</h3>
+                <p id="deleteModalText">This action cannot be undone.</p>
+                <div class="delete-buttons">
+                    <button class="delete-cancel-btn" id="deleteCancelBtn">Cancel</button>
+                    <button class="delete-confirm-btn" id="deleteConfirmBtn">Delete</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1857,6 +1972,10 @@
                 savedConversations: "Your saved conversations",
                 noSavedConversations: "No saved conversations yet",
                 deleteConfirmation: "Are you sure you want to delete this conversation?",
+                deleteConversation: "Delete Conversation?",
+                deleteConfirmationText: "This action cannot be undone.",
+                cancel: "Cancel",
+                delete: "Delete",
                 getMoreEnergy: "Get More Energy",
                 chooseEnergyPackage: "Choose your energy package",
                 sendGift: "Send a Gift",
@@ -1917,6 +2036,10 @@
                 savedConversations: "保存された会話",
                 noSavedConversations: "保存された会話はまだありません",
                 deleteConfirmation: "この会話を削除してもよろしいですか？",
+                deleteConversation: "会話を削除しますか？",
+                deleteConfirmationText: "この操作は元に戻せません。",
+                cancel: "キャンセル",
+                delete: "削除",
                 getMoreEnergy: "エナジーを追加",
                 chooseEnergyPackage: "エナジーパッケージを選択",
                 sendGift: "ギフトを送る",
@@ -1977,6 +2100,10 @@
                 savedConversations: "您保存的对话",
                 noSavedConversations: "还没有保存的对话",
                 deleteConfirmation: "您确定要删除这个对话吗？",
+                deleteConversation: "删除对话？",
+                deleteConfirmationText: "此操作无法撤消。",
+                cancel: "取消",
+                delete: "删除",
                 getMoreEnergy: "获取更多能量",
                 chooseEnergyPackage: "选择能量包",
                 sendGift: "发送礼物",
@@ -2456,6 +2583,13 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             });
             document.getElementById('historyModal').addEventListener('click', function(e) {
                 if (e.target === this) closeHistoryModal();
+            });
+            
+            // Delete modal event listeners
+            document.getElementById('deleteCancelBtn').addEventListener('click', closeDeleteModal);
+            document.getElementById('deleteConfirmBtn').addEventListener('click', confirmDelete);
+            document.getElementById('deleteModal').addEventListener('click', function(e) {
+                if (e.target === this) closeDeleteModal();
             });
         }
 
@@ -3103,15 +3237,42 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             }
         }
 
+        let pendingDeleteChatId = null;
+
         function deleteChat(chatId) {
-            if (!confirm(t('deleteConfirmation'))) return;
+            pendingDeleteChatId = chatId;
+            
+            // Get chat info for display
+            const chatHistory = getChatHistory();
+            const chat = chatHistory[chatId];
+            
+            if (chat) {
+                document.getElementById('deleteModalTitle').textContent = t('deleteConversation') || 'Delete Conversation?';
+                document.getElementById('deleteModalText').textContent = 
+                    `${chat.characterName} • ${t('deleteConfirmationText') || 'This action cannot be undone.'}`;
+            }
+            
+            // Show modal
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        function confirmDelete() {
+            if (!pendingDeleteChatId) return;
             
             const chatHistory = getChatHistory();
-            delete chatHistory[chatId];
+            delete chatHistory[pendingDeleteChatId];
             localStorage.setItem('friendgpt_chat_history', JSON.stringify(chatHistory));
             
             // Reload the history display
             loadChatHistory();
+            
+            // Close modal
+            closeDeleteModal();
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            pendingDeleteChatId = null;
         }
 
         function updateUILanguage() {
@@ -3134,8 +3295,26 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                 'characterCreatorModal .creator-header h2': 'createCharacter',
                 'characterCreatorModal .creator-header p': 'designCompanion',
                 'cancelCreateBtn': 'cancel',
-                'messageInput': 'typeMessage'
+                'messageInput': 'typeMessage',
+                'deleteCancelBtn': 'cancel',
+                'deleteConfirmBtn': 'delete'
             };
+
+            // Update elements by ID or selector
+            for (const selector in elements) {
+                const element = selector.includes(' ') 
+                    ? document.querySelector(selector)
+                    : document.getElementById(selector);
+                
+                if (element) {
+                    const key = elements[selector];
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.placeholder = t(key);
+                    } else {
+                        element.textContent = t(key);
+                    }
+                }
+            }
 
             // Update section titles
             document.querySelectorAll('.section-title').forEach((el, index) => {

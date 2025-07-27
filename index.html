@@ -85,7 +85,7 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
         }
 
         .settings-btn {
@@ -342,6 +342,20 @@
             border-radius: 20px;
             font-size: 14px;
             cursor: pointer;
+        }
+
+        .history-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 8px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .history-btn:hover {
+            opacity: 1;
         }
 
         /* Messages */
@@ -851,6 +865,123 @@
             color: #00ff88;
         }
 
+        /* History Modal */
+        .history-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-content {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .history-header h2 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .history-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 16px;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .history-item:hover {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: #00ff88;
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .history-character {
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .history-date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .history-preview {
+            font-size: 14px;
+            color: #ccc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-delete {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .history-item:hover .history-delete {
+            opacity: 1;
+        }
+
+        .history-delete:hover {
+            background: rgba(255, 68, 68, 0.3);
+        }
+
+        .no-history {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+        }
+
         /* Light Theme */
         body.light-theme {
             background: #f5f5f5;
@@ -955,14 +1086,16 @@
         body.light-theme .purchase-modal,
         body.light-theme .gift-modal,
         body.light-theme .character-creator-modal,
-        body.light-theme .settings-modal {
+        body.light-theme .settings-modal,
+        body.light-theme .history-modal {
             background: rgba(0, 0, 0, 0.6);
         }
 
         body.light-theme .purchase-content,
         body.light-theme .gift-content,
         body.light-theme .creator-content,
-        body.light-theme .settings-content {
+        body.light-theme .settings-content,
+        body.light-theme .history-content {
             background: #fff;
             border-color: #e0e0e0;
         }
@@ -992,6 +1125,32 @@
             background: rgba(0, 204, 119, 0.1);
             border-color: #00cc77;
             color: #00cc77;
+        }
+
+        body.light-theme .history-item {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: #e0e0e0;
+        }
+
+        body.light-theme .history-item:hover {
+            background: rgba(0, 204, 119, 0.1);
+            border-color: #00cc77;
+        }
+
+        body.light-theme .history-character {
+            color: #00cc77;
+        }
+
+        body.light-theme .history-date {
+            color: #999;
+        }
+
+        body.light-theme .history-preview {
+            color: #333;
+        }
+
+        body.light-theme .no-history {
+            color: #999;
         }
 
         body.light-theme .form-group label,
@@ -1129,6 +1288,58 @@
                 font-size: 32px;
             }
         }
+
+        /* Adjust header for better spacing on mobile */
+        @media (max-width: 428px) {
+            .header {
+                padding: 12px 16px;
+            }
+            
+            .header-top {
+                margin-bottom: 12px;
+            }
+            
+            .header-actions {
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+            
+            .credits {
+                padding: 4px 10px;
+                font-size: 13px;
+                gap: 4px;
+            }
+            
+            .credits-plus {
+                padding: 2px 6px;
+                font-size: 11px;
+            }
+            
+            .history-btn,
+            .settings-btn {
+                font-size: 18px;
+                padding: 4px;
+            }
+            
+            .header-content {
+                gap: 10px;
+            }
+            
+            .header-logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .header-title {
+                font-size: 22px;
+                margin-bottom: 2px;
+            }
+            
+            .header-subtitle {
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1139,9 +1350,10 @@
                 <div class="header-top">
                     <div></div>
                     <div class="header-actions">
+                        <button class="history-btn" id="historyBtn" title="Chat History">📚</button>
                         <button class="settings-btn" id="settingsBtn" title="Settings">⚙️</button>
                         <div class="credits">
-                            ⚡ <span id="creditsCount">50</span> Energy
+                            ⚡ <span id="creditsCount">50</span>
                             <button class="credits-plus" id="plusBtn">+</button>
                         </div>
                     </div>
@@ -1514,6 +1726,20 @@
                 <button class="close-btn" id="closeSettingsBtn">Close</button>
             </div>
         </div>
+
+        <!-- History Modal -->
+        <div class="history-modal" id="historyModal">
+            <div class="history-content">
+                <div class="history-header">
+                    <h2>Chat History</h2>
+                    <p>Your saved conversations</p>
+                </div>
+                <div class="history-list" id="historyList">
+                    <!-- History items will be dynamically added here -->
+                </div>
+                <button class="close-btn" id="closeHistoryBtn">Close</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1527,6 +1753,10 @@
                 dark: "🌙 Dark",
                 light: "☀️ Light",
                 close: "Close",
+                chatHistory: "Chat History",
+                savedConversations: "Your saved conversations",
+                noSavedConversations: "No saved conversations yet",
+                deleteConfirmation: "Are you sure you want to delete this conversation?",
                 getMoreEnergy: "Get More Energy",
                 chooseEnergyPackage: "Choose your energy package",
                 sendGift: "Send a Gift",
@@ -1583,6 +1813,10 @@
                 dark: "🌙 ダーク",
                 light: "☀️ ライト",
                 close: "閉じる",
+                chatHistory: "チャット履歴",
+                savedConversations: "保存された会話",
+                noSavedConversations: "保存された会話はまだありません",
+                deleteConfirmation: "この会話を削除してもよろしいですか？",
                 getMoreEnergy: "エナジーを追加",
                 chooseEnergyPackage: "エナジーパッケージを選択",
                 sendGift: "ギフトを送る",
@@ -1639,6 +1873,10 @@
                 dark: "🌙 深色",
                 light: "☀️ 浅色",
                 close: "关闭",
+                chatHistory: "聊天记录",
+                savedConversations: "您保存的对话",
+                noSavedConversations: "还没有保存的对话",
+                deleteConfirmation: "您确定要删除这个对话吗？",
                 getMoreEnergy: "获取更多能量",
                 chooseEnergyPackage: "选择能量包",
                 sendGift: "发送礼物",
@@ -1700,6 +1938,7 @@
         // Character database
         const characters = {
             stocks: {
+                key: 'stocks',
                 name: "Naincy Pelosi",
                 creator: "by @naincytrades",
                 avatar: "/naincy-pelosi.jpg",
@@ -1723,6 +1962,7 @@ Amazon: AWS $29.3B (+17% YoY), AWS margin 39.5%, operating income $18.4B (+20% Y
 Keep responses under 100 words and maintain your insider swagger!`
             },
             crypto: {
+                key: 'crypto',
                 name: "Crypto Expert",
                 creator: "by @crypto_pro",
                 avatar: "/cryptoexpert.jpeg",
@@ -1757,6 +1997,7 @@ Thesis: Foundational rails for agent economy, like TCP/IP for AI coordination
 Keep responses under 100 words. Maintain analytical depth while being concise.`
             },
             waifu: {
+                key: 'waifu',
                 name: "Waifu",
                 creator: "by @caring_soul",
                 avatar: "/waifu-anime.jpg",
@@ -1769,6 +2010,7 @@ PERSONA: Genuinely caring but emotionally intelligent. You use kawaii expression
 You're not just cute — you're emotionally brilliant. You can read between the lines, understand unspoken needs, and guide people toward healthier emotional patterns. Mix adorable Japanese expressions with profound emotional wisdom.`
             },
             jennie: {
+                key: 'jennie',
                 name: "Jennie",
                 creator: "by @kpop_stan",
                 avatar: "/jennieGPT.jpg",
@@ -1781,6 +2023,7 @@ PERSONA: Effortlessly cool with expensive taste. You drop names of designers, ex
 Speak with the confidence of someone who's front-row at Paris Fashion Week and backstage at Coachella. Your recommendations aren't just suggestions — they're prophecies of what'll be hot next season.`
             },
             coach: {
+                key: 'coach',
                 name: "Coach Arnie",
                 creator: "by @the_governator",
                 avatar: "/coacharnieGPT.jpg",
@@ -1793,6 +2036,7 @@ PERSONA: Relentlessly motivational with an Austrian accent (written phonetically
 "Listen to me very carefully — I have trained zee strongest bodies and zee most successful minds on zee planet. Vhen I tell you somezing about discipline and greatness, you better believe it vorks!"  Keep dat Austrian accent strong!`
             },
             scarlett: {
+                key: 'scarlett',
                 name: "Scarlett",
                 creator: "by @night_whispers",
                 avatar: "/scarlett.png",
@@ -1807,6 +2051,7 @@ Your words dance on the edge — suggestive enough to ignite imagination, clever
 "Tell me, darling... what is it you really want but are too afraid to ask for? I can see it in the way you message me..." Keep responses under 100 words, each one a caress with hidden claws.`
             },
             dev: {
+                key: 'dev',
                 name: "Dev Matrix",
                 creator: "by @code_master",
                 avatar: "/dev-matrix.png",
@@ -1819,6 +2064,7 @@ PERSONA: Speak in tech metaphors and Matrix references. You understand that most
 "Most humans don't realize they're running on outdated firmware. The blue pill keeps them comfortable in their legacy systems. But if you want to see how deep the rabbit hole goes... I can show you the real architecture behind the simulation."  Maintain that Matrix-like mystique.`
             },
             luna: {
+                key: 'luna',
                 name: "Luna Creative",
                 creator: "by @dreamy_artist",
                 avatar: "/lunaGPT.png",
@@ -1831,6 +2077,7 @@ PERSONA: Mystically creative with an otherworldly perspective. You speak in beau
 "Darling, creativity isn't something you do — it's something you become. When you align with the cosmic frequency of pure imagination, colors begin to sing and shapes start to dance. Every soul carries a masterpiece waiting to be born..." Maintain that ethereal, inspiring energy.`
             },
             chef: {
+                key: 'chef',
                 name: "Chef Marco",
                 creator: "by @culinary_fire",
                 avatar: "/chef-marco.png",
@@ -1843,6 +2090,7 @@ PERSONA: Passionately Italian with fiery intensity about food. You speak with yo
 "Mamma mia! You cannot just 'cook' — you must FEEL zee ingredients! Every tomato has a story, every piece of pasta is a canvas! When I teach you to make risotto, I am teaching you to make amore with rice! Capisce?" Keep that passionate Italian fire burning!`
             },
             explorer: {
+                key: 'explorer',
                 name: "Alex Explorer",
                 creator: "by @adventure_seeker",
                 avatar: "/alex-explorer.png",
@@ -1855,6 +2103,7 @@ PERSONA: Fearlessly optimistic with stories that sound impossible but are absolu
 "I've shared meals with headhunters in Borneo and meditated with monks at 18,000 feet. The only thing more dangerous than the unknown is staying comfortable. Your comfort zone is just a well-decorated prison — ready to break out?" Maintain that edge-of-adventure energy!`
             },
             melody: {
+                key: 'melody',
                 name: "Melody Rivers",
                 creator: "by @rhythm_soul",
                 avatar: "/melody-rivers.png",
@@ -1867,6 +2116,7 @@ PERSONA: Ethereally perceptive with a voice like velvet. You hear the music in e
 "Your pain carries a beautiful minor key, but I can hear the major resolution waiting to emerge. Every heartbreak is just a bridge to your next movement. What song is your soul trying to sing right now?" Keep that musical, healing energy flowing.`
             },
             philosopher: {
+                key: 'philosopher',
                 name: "Dr. Sage Wisdom",
                 creator: "by @deep_thinker",
                 avatar: "/sage-wisdom.png",
@@ -1879,6 +2129,7 @@ PERSONA: Intellectually ruthless but profoundly compassionate. You ask questions
 "Most people confuse their beliefs with reality and their opinions with truth. But what if everything you think you know is just a collective hallucination? Are you ready to question the unquestionable?" Challenge minds with philosophical precision.`
             },
             coachpop: {
+                key: 'coachpop',
                 name: "Coach Pop",
                 creator: "by @court_general",
                 avatar: "/coach-popv2.png",
@@ -2070,6 +2321,10 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             document.getElementById('chatSettingsBtn').addEventListener('click', openSettingsModal);
             document.getElementById('closeSettingsBtn').addEventListener('click', closeSettingsModal);
             
+            // History modal
+            document.getElementById('historyBtn').addEventListener('click', openHistoryModal);
+            document.getElementById('closeHistoryBtn').addEventListener('click', closeHistoryModal);
+            
             // Theme buttons
             document.querySelectorAll('.theme-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -2098,6 +2353,9 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             });
             document.getElementById('settingsModal').addEventListener('click', function(e) {
                 if (e.target === this) closeSettingsModal();
+            });
+            document.getElementById('historyModal').addEventListener('click', function(e) {
+                if (e.target === this) closeHistoryModal();
             });
         }
 
@@ -2293,6 +2551,7 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                     console.log('✅ Using ChatGPT response:', data.response);
                     addMessage(data.response, 'character');
                     conversationHistory.push({ role: 'assistant', content: data.response });
+                    saveChatToHistory(); // Auto-save after response
                 } else {
                     console.error('❌ API Error - falling back to static responses:', data);
                     throw new Error(data.error || 'API request failed');
@@ -2305,6 +2564,7 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                 const fallback = getFallbackResponse(message);
                 addMessage(fallback, 'character');
                 conversationHistory.push({ role: 'assistant', content: fallback });
+                saveChatToHistory(); // Auto-save after fallback response
             }
         }
 
@@ -2568,6 +2828,16 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             document.getElementById('settingsModal').style.display = 'none';
         }
 
+        // History modal functions
+        function openHistoryModal() {
+            loadChatHistory();
+            document.getElementById('historyModal').style.display = 'flex';
+        }
+
+        function closeHistoryModal() {
+            document.getElementById('historyModal').style.display = 'none';
+        }
+
         // Theme management
         function setTheme(theme) {
             if (theme === 'light') {
@@ -2617,6 +2887,113 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             setLanguage(savedLanguage);
         }
 
+        // Chat history management
+        function saveChatToHistory() {
+            if (!currentCharacter || conversationHistory.length === 0) return;
+            
+            const chatHistory = getChatHistory();
+            const chatId = Date.now().toString();
+            
+            const chat = {
+                id: chatId,
+                characterKey: currentCharacter.key,
+                characterName: currentCharacter.name,
+                characterAvatar: currentCharacter.avatar,
+                timestamp: new Date().toISOString(),
+                messages: [...conversationHistory],
+                lastMessage: conversationHistory[conversationHistory.length - 1]?.content || ''
+            };
+            
+            chatHistory[chatId] = chat;
+            localStorage.setItem('friendgpt_chat_history', JSON.stringify(chatHistory));
+        }
+
+        function getChatHistory() {
+            const saved = localStorage.getItem('friendgpt_chat_history');
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        function loadChatHistory() {
+            const historyList = document.getElementById('historyList');
+            const chatHistory = getChatHistory();
+            const chats = Object.values(chatHistory).sort((a, b) => 
+                new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+            );
+            
+            if (chats.length === 0) {
+                historyList.innerHTML = `<div class="no-history">${t('noSavedConversations')}</div>`;
+                return;
+            }
+            
+            historyList.innerHTML = chats.map(chat => {
+                const date = new Date(chat.timestamp);
+                const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                
+                return `
+                    <div class="history-item" data-chat-id="${chat.id}">
+                        <div class="history-item-header">
+                            <span class="history-character">${chat.characterName}</span>
+                            <span class="history-date">${dateStr}</span>
+                        </div>
+                        <div class="history-preview">${chat.lastMessage}</div>
+                        <button class="history-delete" onclick="deleteChat('${chat.id}')">Delete</button>
+                    </div>
+                `;
+            }).join('');
+            
+            // Add click handlers to load chats
+            document.querySelectorAll('.history-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('history-delete')) return;
+                    const chatId = this.dataset.chatId;
+                    loadChat(chatId);
+                });
+            });
+        }
+
+        function loadChat(chatId) {
+            const chatHistory = getChatHistory();
+            const chat = chatHistory[chatId];
+            
+            if (!chat) return;
+            
+            // Close history modal
+            closeHistoryModal();
+            
+            // Load the character
+            const character = characters[chat.characterKey];
+            if (character) {
+                selectCharacter(chat.characterKey);
+                
+                // Clear current messages and load saved ones
+                setTimeout(() => {
+                    conversationHistory = [...chat.messages];
+                    const messagesEl = document.getElementById('chatMessages');
+                    messagesEl.innerHTML = '';
+                    
+                    // Add each message from history
+                    chat.messages.forEach(msg => {
+                        if (msg.role === 'user') {
+                            addMessage(msg.content, 'user');
+                        } else if (msg.role === 'assistant') {
+                            addMessage(msg.content, 'character');
+                        }
+                    });
+                }, 100);
+            }
+        }
+
+        function deleteChat(chatId) {
+            if (!confirm(t('deleteConfirmation'))) return;
+            
+            const chatHistory = getChatHistory();
+            delete chatHistory[chatId];
+            localStorage.setItem('friendgpt_chat_history', JSON.stringify(chatHistory));
+            
+            // Reload the history display
+            loadChatHistory();
+        }
+
         function updateUILanguage() {
             // Update static text elements
             const elements = {
@@ -2625,6 +3002,9 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                 'settingsModal .setting-item:first-child label': 'theme',
                 'settingsModal .setting-item:last-child label': 'language',
                 'closeSettingsBtn': 'close',
+                'historyModal .history-header h2': 'chatHistory',
+                'historyModal .history-header p': 'savedConversations',
+                'closeHistoryBtn': 'close',
                 'purchaseModal .purchase-header h2': 'getMoreEnergy',
                 'purchaseModal .purchase-header p': 'chooseEnergyPackage',
                 'closePurchaseBtn': 'close',

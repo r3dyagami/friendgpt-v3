@@ -565,26 +565,69 @@
             background: #222;
             border: 1px solid #333;
             border-radius: 12px;
-            padding: 16px;
-            cursor: pointer;
+            padding: 20px;
             transition: all 0.3s;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+        }
+
+        .purchase-option.popular {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .popular-tag {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #00ff88;
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
         }
 
         .purchase-option:hover {
             border-color: #00ff88;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.2);
         }
 
         .purchase-amount {
             font-size: 20px;
             font-weight: bold;
             color: #00ff88;
+            text-align: center;
         }
 
         .purchase-price {
-            font-size: 16px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+        }
+
+        .paypal-button-container {
+            width: 100%;
+            min-height: 45px;
+            margin-top: 8px;
+        }
+
+        .purchase-notice {
+            text-align: center;
+            padding: 16px;
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .purchase-notice p {
+            margin: 4px 0;
+            font-size: 13px;
             color: #999;
         }
 
@@ -1046,6 +1089,79 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
+        /* Purchase Success Modal */
+        .purchase-success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .purchase-success-content {
+            background: #1a1a1a;
+            border: 2px solid #00ff88;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 320px;
+            width: 90%;
+            text-align: center;
+            animation: successPop 0.3s ease-out;
+        }
+
+        @keyframes successPop {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .purchase-success-content h3 {
+            color: #00ff88;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .purchase-success-content p {
+            color: #ccc;
+            margin-bottom: 8px;
+        }
+
+        .success-order-id {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .purchase-success-content button {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .purchase-success-content button:hover {
+            background: #00cc77;
+        }
+
         /* Delete Confirmation Modal */
         .delete-modal {
             display: none;
@@ -1356,6 +1472,27 @@
             background: #e0e0e0;
         }
 
+        body.light-theme .purchase-success-modal {
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        body.light-theme .purchase-success-content {
+            background: #fff;
+            border-color: #00cc77;
+        }
+
+        body.light-theme .purchase-success-content h3 {
+            color: #00cc77;
+        }
+
+        body.light-theme .purchase-success-content p {
+            color: #333;
+        }
+
+        body.light-theme .success-order-id {
+            color: #999;
+        }
+
         body.light-theme .form-group label,
         body.light-theme .setting-item label {
             color: #333;
@@ -1546,6 +1683,10 @@
     </style>
 </head>
 <body>
+    <!-- PayPal SDK - Replace YOUR_PAYPAL_CLIENT_ID with your actual PayPal Client ID -->
+    <!-- Get your Client ID from: https://developer.paypal.com/dashboard/ -->
+    <!-- For testing, use sandbox Client ID. For production, use live Client ID -->
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
     <div class="app-container">
         <!-- Browser View -->
         <div id="browserView">
@@ -1810,17 +1951,25 @@
                 </div>
                 <div class="purchase-options">
                     <div class="purchase-option" data-amount="100" data-price="1.00">
-                        <div class="purchase-amount">⚡ 100</div>
+                        <div class="purchase-amount">⚡ 100 Energy</div>
                         <div class="purchase-price">$1.00</div>
+                        <div class="paypal-button-container" id="paypal-button-100"></div>
                     </div>
-                    <div class="purchase-option" data-amount="750" data-price="5.00">
-                        <div class="purchase-amount">⚡ 750</div>
+                    <div class="purchase-option popular" data-amount="750" data-price="5.00">
+                        <div class="popular-tag">Most Popular</div>
+                        <div class="purchase-amount">⚡ 750 Energy</div>
                         <div class="purchase-price">$5.00</div>
+                        <div class="paypal-button-container" id="paypal-button-750"></div>
                     </div>
                     <div class="purchase-option" data-amount="1000" data-price="10.00">
-                        <div class="purchase-amount">⚡ 1000</div>
+                        <div class="purchase-amount">⚡ 1000 Energy</div>
                         <div class="purchase-price">$10.00</div>
+                        <div class="paypal-button-container" id="paypal-button-1000"></div>
                     </div>
+                </div>
+                <div class="purchase-notice">
+                    <p>💳 Secure payment via PayPal</p>
+                    <p>⚡ Energy added instantly after payment</p>
                 </div>
                 <button class="close-btn" id="closePurchaseBtn">Close</button>
             </div>
@@ -2434,6 +2583,96 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
         }
         let conversationHistory = [];
 
+        // PayPal integration
+        let paypalButtonsInitialized = false;
+        
+        function initializePayPalButtons() {
+            // Prevent multiple initializations
+            if (paypalButtonsInitialized) return;
+            
+            // Check if PayPal SDK is loaded
+            if (typeof paypal === 'undefined') {
+                console.error('PayPal SDK not loaded. Please add your PayPal Client ID.');
+                return;
+            }
+            
+            const packages = [
+                { id: 'paypal-button-100', amount: '1.00', credits: 100 },
+                { id: 'paypal-button-750', amount: '5.00', credits: 750 },
+                { id: 'paypal-button-1000', amount: '10.00', credits: 1000 }
+            ];
+            
+            packages.forEach(package => {
+                const container = document.getElementById(package.id);
+                if (container && container.innerHTML === '') {
+                    paypal.Buttons({
+                        style: {
+                            layout: 'horizontal',
+                            color: 'gold',
+                            shape: 'rect',
+                            label: 'paypal',
+                            height: 40
+                        },
+                        createOrder: function(data, actions) {
+                            return actions.order.create({
+                                purchase_units: [{
+                                    amount: {
+                                        value: package.amount,
+                                        currency_code: 'USD'
+                                    },
+                                    description: `${package.credits} Energy Credits for FriendGPT`
+                                }]
+                            });
+                        },
+                        onApprove: function(data, actions) {
+                            return actions.order.capture().then(function(details) {
+                                // Handle successful payment
+                                handleSuccessfulPayment(package.credits, details);
+                            });
+                        },
+                        onError: function(err) {
+                            console.error('PayPal Error:', err);
+                            alert('Payment failed. Please try again.');
+                        }
+                    }).render('#' + package.id);
+                }
+            });
+            
+            paypalButtonsInitialized = true;
+        }
+        
+        function handleSuccessfulPayment(credits, orderDetails) {
+            // Add credits to user account
+            creditData.credits += credits;
+            creditData.totalPurchased += credits;
+            saveCreditData();
+            updateCreditsDisplay();
+            
+            // Close purchase modal
+            closePurchaseModal();
+            
+            // Show success message
+            const successModal = document.createElement('div');
+            successModal.className = 'purchase-success-modal';
+            successModal.innerHTML = `
+                <div class="purchase-success-content">
+                    <div class="success-icon">✅</div>
+                    <h3>Payment Successful!</h3>
+                    <p>${credits} energy credits have been added to your account.</p>
+                    <p class="success-order-id">Order ID: ${orderDetails.id}</p>
+                    <button onclick="this.parentElement.parentElement.remove()">Continue</button>
+                </div>
+            `;
+            document.body.appendChild(successModal);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (successModal.parentElement) {
+                    successModal.remove();
+                }
+            }, 5000);
+        }
+
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
             loadCreditData();
@@ -3024,6 +3263,8 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
         // Modal functions
         function openPurchaseModal() {
             document.getElementById('purchaseModal').style.display = 'flex';
+            // Initialize PayPal buttons when modal opens
+            setTimeout(initializePayPalButtons, 100);
         }
 
         function closePurchaseModal() {

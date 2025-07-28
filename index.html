@@ -565,11 +565,11 @@
             background: #222;
             border: 1px solid #333;
             border-radius: 12px;
-            padding: 20px;
+            padding: 16px;
             transition: all 0.3s;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
             position: relative;
         }
 
@@ -580,14 +580,14 @@
 
         .popular-tag {
             position: absolute;
-            top: -10px;
+            top: -8px;
             left: 50%;
             transform: translateX(-50%);
             background: #00ff88;
             color: #000;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
             font-weight: bold;
         }
 
@@ -598,36 +598,37 @@
         }
 
         .purchase-amount {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: bold;
             color: #00ff88;
             text-align: center;
+            margin: 0;
         }
 
         .purchase-price {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             color: #fff;
             text-align: center;
+            margin: 0;
         }
 
         .paypal-button-container {
             width: 100%;
-            min-height: 45px;
-            margin-top: 8px;
+            min-height: 35px;
         }
 
         .purchase-notice {
             text-align: center;
-            padding: 16px;
+            padding: 12px;
             background: rgba(0, 255, 136, 0.05);
             border-radius: 8px;
             margin-bottom: 16px;
         }
 
         .purchase-notice p {
-            margin: 4px 0;
-            font-size: 13px;
+            margin: 2px 0;
+            font-size: 12px;
             color: #999;
         }
 
@@ -2611,7 +2612,8 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                             color: 'gold',
                             shape: 'rect',
                             label: 'paypal',
-                            height: 40
+                            height: 35,
+                            tagline: false
                         },
                         createOrder: function(data, actions) {
                             return actions.order.create({

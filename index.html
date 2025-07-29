@@ -547,25 +547,31 @@
 
         .purchase-header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .purchase-header h2 {
             color: #00ff88;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
+            font-size: 20px;
+        }
+
+        .purchase-header p {
+            font-size: 13px;
+            margin-bottom: 4px;
         }
 
         .purchase-options {
             display: grid;
-            gap: 16px;
-            margin-bottom: 20px;
+            gap: 4px;
+            margin-bottom: 8px;
         }
 
         .purchase-option {
-            background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
-            border: 2px solid #333;
-            border-radius: 16px;
-            padding: 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 4px 8px;
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
@@ -587,23 +593,6 @@
             opacity: 1;
         }
 
-        .purchase-option.popular {
-            border-color: #00ff88;
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.05) 0%, rgba(0, 255, 136, 0.1) 100%);
-        }
-
-        .popular-tag {
-            position: absolute;
-            top: -10px;
-            right: 20px;
-            background: #00ff88;
-            color: #000;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: bold;
-            box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3);
-        }
 
         .purchase-option:hover {
             border-color: #00ff88;
@@ -615,27 +604,27 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 2px;
             position: relative;
             z-index: 1;
         }
 
         .purchase-amount {
-            font-size: 18px;
+            font-size: 12px;
             font-weight: 600;
             color: #fff;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 3px;
         }
 
         .energy-icon {
             color: #00ff88;
-            font-size: 20px;
+            font-size: 12px;
         }
 
         .purchase-price {
-            font-size: 28px;
+            font-size: 16px;
             font-weight: bold;
             color: #00ff88;
             text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
@@ -643,23 +632,23 @@
 
         .paypal-button-container {
             width: 100%;
-            min-height: 45px;
+            min-height: 24px;
             position: relative;
             z-index: 1;
-            margin-top: 12px;
+            margin-top: 2px;
         }
 
         .purchase-notice {
             text-align: center;
-            padding: 12px;
+            padding: 8px;
             background: rgba(0, 255, 136, 0.05);
-            border-radius: 8px;
-            margin-bottom: 16px;
+            border-radius: 6px;
+            margin-bottom: 12px;
         }
 
         .purchase-notice p {
-            margin: 2px 0;
-            font-size: 12px;
+            margin: 1px 0;
+            font-size: 11px;
             color: #999;
         }
 
@@ -721,10 +710,11 @@
             background: #333;
             color: #fff;
             border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
             cursor: pointer;
             width: 100%;
+            font-size: 13px;
         }
 
         /* Character Creator Modal */
@@ -2087,36 +2077,35 @@
                     <p>Choose your energy package</p>
                 </div>
                 <div class="purchase-options">
-                    <div class="purchase-option" data-amount="100" data-price="1.00">
+                    <div class="purchase-option" data-amount="50" data-price="1.00">
+                        <div class="purchase-info">
+                            <div class="purchase-amount">
+                                <span class="energy-icon">⚡</span>
+                                <span>50 Energy</span>
+                            </div>
+                            <div class="purchase-price">$1</div>
+                        </div>
+                        <div class="paypal-button-container" id="paypal-button-50"></div>
+                    </div>
+                    <div class="purchase-option" data-amount="100" data-price="5.00">
                         <div class="purchase-info">
                             <div class="purchase-amount">
                                 <span class="energy-icon">⚡</span>
                                 <span>100 Energy</span>
                             </div>
-                            <div class="purchase-price">$1</div>
+                            <div class="purchase-price">$5</div>
                         </div>
                         <div class="paypal-button-container" id="paypal-button-100"></div>
                     </div>
-                    <div class="purchase-option popular" data-amount="750" data-price="5.00">
-                        <div class="popular-tag">BEST VALUE</div>
+                    <div class="purchase-option" data-amount="300" data-price="10.00">
                         <div class="purchase-info">
                             <div class="purchase-amount">
                                 <span class="energy-icon">⚡</span>
-                                <span>750 Energy</span>
-                            </div>
-                            <div class="purchase-price">$5</div>
-                        </div>
-                        <div class="paypal-button-container" id="paypal-button-750"></div>
-                    </div>
-                    <div class="purchase-option" data-amount="1000" data-price="10.00">
-                        <div class="purchase-info">
-                            <div class="purchase-amount">
-                                <span class="energy-icon">⚡</span>
-                                <span>1000 Energy</span>
+                                <span>300 Energy</span>
                             </div>
                             <div class="purchase-price">$10</div>
                         </div>
-                        <div class="paypal-button-container" id="paypal-button-1000"></div>
+                        <div class="paypal-button-container" id="paypal-button-300"></div>
                     </div>
                 </div>
                 <div class="purchase-notice">
@@ -2775,9 +2764,9 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             }
             
             const packages = [
-                { id: 'paypal-button-100', amount: '1.00', credits: 100 },
-                { id: 'paypal-button-750', amount: '5.00', credits: 750 },
-                { id: 'paypal-button-1000', amount: '10.00', credits: 1000 }
+                { id: 'paypal-button-50', amount: '1.00', credits: 50 },
+                { id: 'paypal-button-100', amount: '5.00', credits: 100 },
+                { id: 'paypal-button-300', amount: '10.00', credits: 300 }
             ];
             
             packages.forEach(package => {

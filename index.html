@@ -578,6 +578,9 @@
             position: relative;
             overflow: visible;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            min-height: 120px;
         }
 
         .purchase-option::before {
@@ -633,9 +636,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             text-align: center;
             gap: 8px;
-            margin-bottom: 12px;
+            flex: 1;
             position: relative;
             z-index: 1;
         }

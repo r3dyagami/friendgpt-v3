@@ -557,65 +557,96 @@
 
         .purchase-options {
             display: grid;
-            gap: 12px;
+            gap: 16px;
             margin-bottom: 20px;
         }
 
         .purchase-option {
-            background: #222;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 16px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
+            border: 2px solid #333;
+            border-radius: 16px;
+            padding: 20px;
             transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
             position: relative;
+            overflow: hidden;
+        }
+
+        .purchase-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(0, 255, 136, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .purchase-option:hover::before {
+            opacity: 1;
         }
 
         .purchase-option.popular {
             border-color: #00ff88;
-            background: rgba(0, 255, 136, 0.05);
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.05) 0%, rgba(0, 255, 136, 0.1) 100%);
         }
 
         .popular-tag {
             position: absolute;
-            top: -8px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: -10px;
+            right: 20px;
             background: #00ff88;
             color: #000;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 10px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3);
         }
 
         .purchase-option:hover {
             border-color: #00ff88;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 255, 136, 0.3);
+        }
+
+        .purchase-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
         }
 
         .purchase-amount {
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .energy-icon {
             color: #00ff88;
-            text-align: center;
-            margin: 0;
+            font-size: 20px;
         }
 
         .purchase-price {
-            font-size: 20px;
+            font-size: 28px;
             font-weight: bold;
-            color: #fff;
-            text-align: center;
-            margin: 0;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
 
         .paypal-button-container {
             width: 100%;
-            min-height: 35px;
+            min-height: 45px;
+            position: relative;
+            z-index: 1;
+            margin-top: 12px;
         }
 
         .purchase-notice {
@@ -1405,7 +1436,38 @@
             border-color: #e0e0e0;
         }
 
-        body.light-theme .purchase-option,
+        body.light-theme .purchase-option {
+            background: linear-gradient(135deg, #fff 0%, #f9f9f9 100%);
+            border-color: #e0e0e0;
+        }
+
+        body.light-theme .purchase-option::before {
+            background: linear-gradient(135deg, transparent 0%, rgba(0, 204, 119, 0.1) 100%);
+        }
+
+        body.light-theme .purchase-option.popular {
+            border-color: #00cc77;
+            background: linear-gradient(135deg, rgba(0, 204, 119, 0.05) 0%, rgba(0, 204, 119, 0.1) 100%);
+        }
+
+        body.light-theme .purchase-option:hover {
+            border-color: #00cc77;
+            box-shadow: 0 8px 24px rgba(0, 204, 119, 0.2);
+        }
+
+        body.light-theme .purchase-amount {
+            color: #333;
+        }
+
+        body.light-theme .energy-icon {
+            color: #00cc77;
+        }
+
+        body.light-theme .purchase-price {
+            color: #00cc77;
+            text-shadow: 0 0 10px rgba(0, 204, 119, 0.3);
+        }
+
         body.light-theme .gift-item,
         body.light-theme .form-group input,
         body.light-theme .form-group textarea,
@@ -1417,7 +1479,6 @@
             color: #333;
         }
 
-        body.light-theme .purchase-option:hover,
         body.light-theme .personality-btn:hover,
         body.light-theme .personality-btn.active,
         body.light-theme .theme-btn:hover,
@@ -2027,19 +2088,34 @@
                 </div>
                 <div class="purchase-options">
                     <div class="purchase-option" data-amount="100" data-price="1.00">
-                        <div class="purchase-amount">⚡ 100 Energy</div>
-                        <div class="purchase-price">$1.00</div>
+                        <div class="purchase-info">
+                            <div class="purchase-amount">
+                                <span class="energy-icon">⚡</span>
+                                <span>100 Energy</span>
+                            </div>
+                            <div class="purchase-price">$1</div>
+                        </div>
                         <div class="paypal-button-container" id="paypal-button-100"></div>
                     </div>
                     <div class="purchase-option popular" data-amount="750" data-price="5.00">
-                        <div class="popular-tag">Most Popular</div>
-                        <div class="purchase-amount">⚡ 750 Energy</div>
-                        <div class="purchase-price">$5.00</div>
+                        <div class="popular-tag">BEST VALUE</div>
+                        <div class="purchase-info">
+                            <div class="purchase-amount">
+                                <span class="energy-icon">⚡</span>
+                                <span>750 Energy</span>
+                            </div>
+                            <div class="purchase-price">$5</div>
+                        </div>
                         <div class="paypal-button-container" id="paypal-button-750"></div>
                     </div>
                     <div class="purchase-option" data-amount="1000" data-price="10.00">
-                        <div class="purchase-amount">⚡ 1000 Energy</div>
-                        <div class="purchase-price">$10.00</div>
+                        <div class="purchase-info">
+                            <div class="purchase-amount">
+                                <span class="energy-icon">⚡</span>
+                                <span>1000 Energy</span>
+                            </div>
+                            <div class="purchase-price">$10</div>
+                        </div>
                         <div class="paypal-button-container" id="paypal-button-1000"></div>
                     </div>
                 </div>
@@ -2713,7 +2789,7 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                             color: 'gold',
                             shape: 'rect',
                             label: 'paypal',
-                            height: 35,
+                            height: 45,
                             tagline: false
                         },
                         createOrder: function(data, actions) {
@@ -2850,13 +2926,8 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             document.getElementById('chatPlusBtn').addEventListener('click', openPurchaseModal);
             document.getElementById('closePurchaseBtn').addEventListener('click', closePurchaseModal);
             
-            // Purchase options
-            document.querySelectorAll('.purchase-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const amount = parseInt(this.dataset.amount);
-                    purchaseCredits(amount);
-                });
-            });
+            // Purchase options - removed direct click handler
+            // All purchases must go through PayPal buttons
 
             // Gift modal
             document.getElementById('giftBtn').addEventListener('click', openGiftModal);
@@ -3325,14 +3396,8 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             }
         }
 
-        // Purchase credits
-        function purchaseCredits(amount) {
-            creditData.credits += amount;
-            saveCreditData();
-            updateCreditsDisplay();
-            closePurchaseModal();
-            showNotification(`Successfully added ${amount} energy!`, 'success');
-        }
+        // Purchase credits - removed direct purchase to ensure PayPal payment
+        // All purchases must go through PayPal for security
 
         // Send gift
         function sendGift(gift, cost) {

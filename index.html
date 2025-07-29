@@ -1090,6 +1090,54 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
+        /* Notification System */
+        .app-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 320px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            z-index: 4000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease-out;
+        }
+
+        .app-notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .app-notification.success {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .app-notification.error {
+            border-color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .notification-icon {
+            font-size: 24px;
+        }
+
+        .notification-message {
+            flex: 1;
+            color: #fff;
+            font-size: 14px;
+        }
+
         /* Purchase Success Modal */
         .purchase-success-modal {
             position: fixed;
@@ -1494,6 +1542,26 @@
             color: #999;
         }
 
+        body.light-theme .app-notification {
+            background: #f9f9f9;
+            border-color: #e0e0e0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .app-notification.success {
+            border-color: #00cc77;
+            background: rgba(0, 204, 119, 0.1);
+        }
+
+        body.light-theme .app-notification.error {
+            border-color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+        }
+
+        body.light-theme .notification-message {
+            color: #333;
+        }
+
         body.light-theme .form-group label,
         body.light-theme .setting-item label {
             color: #333;
@@ -1679,6 +1747,13 @@
             
             .header-subtitle {
                 font-size: 12px;
+            }
+            
+            /* Mobile notifications */
+            .app-notification {
+                right: 10px;
+                left: 10px;
+                max-width: none;
             }
         }
     </style>
@@ -2584,6 +2659,32 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
         }
         let conversationHistory = [];
 
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `app-notification ${type}`;
+            
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-icon">${icon}</span>
+                    <span class="notification-message">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => notification.classList.add('show'), 10);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
         // PayPal integration
         let paypalButtonsInitialized = false;
         
@@ -2634,7 +2735,7 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                         },
                         onError: function(err) {
                             console.error('PayPal Error:', err);
-                            alert('Payment failed. Please try again.');
+                            showNotification('Payment failed. Please try again.', 'error');
                         }
                     }).render('#' + package.id);
                 }
@@ -3230,13 +3331,13 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             saveCreditData();
             updateCreditsDisplay();
             closePurchaseModal();
-            alert(`Successfully added ${amount} energy!`);
+            showNotification(`Successfully added ${amount} energy!`, 'success');
         }
 
         // Send gift
         function sendGift(gift, cost) {
             if (creditData.credits < cost || creditData.dailyCreditsUsed >= 20) {
-                alert('Not enough energy or daily limit reached!');
+                showNotification('Not enough energy or daily limit reached!', 'error');
                 return;
             }
             
@@ -3638,15 +3739,15 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
 
             // Validation
             if (!name) {
-                alert('Please enter a character name');
+                showNotification('Please enter a character name', 'error');
                 return;
             }
             if (!description) {
-                alert('Please enter a character description');
+                showNotification('Please enter a character description', 'error');
                 return;
             }
             if (!selectedPersonality) {
-                alert('Please select a personality type');
+                showNotification('Please select a personality type', 'error');
                 return;
             }
 
@@ -3681,7 +3782,7 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             closeCharacterCreator();
 
             // Show success message
-            alert(`${name} has been created successfully!`);
+            showNotification(`${name} has been created successfully!`, 'success');
         }
 
         function generateAvatarSVG(name, personality) {

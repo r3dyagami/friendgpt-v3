@@ -3118,15 +3118,7 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                 grid.scrollLeft = 0;
             });
             
-            // Re-attach click handlers to cloned cards
-            document.querySelectorAll('.character-card:not(.plus-card)').forEach(card => {
-                card.addEventListener('click', function() {
-                    const characterKey = this.dataset.character;
-                    if (characterKey) {
-                        selectCharacter(characterKey);
-                    }
-                });
-            });
+            // Note: Click handlers for all cards (original and cloned) are set up in setupEventListeners()
         }
 
         // Setup event listeners
@@ -3771,8 +3763,13 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
 
         // Send gift
         function sendGift(gift, cost) {
-            if (creditData.credits < cost || creditData.dailyCreditsUsed >= 20) {
-                showNotification('Not enough energy or daily limit reached!', 'error');
+            if (creditData.credits < cost) {
+                showNotification(`Not enough energy! You need ${cost} energy but only have ${creditData.credits}.`, 'error');
+                return;
+            }
+            
+            if (creditData.dailyCreditsUsed >= 20) {
+                showNotification('Daily limit reached! You can send up to 20 credits worth of gifts per day.', 'error');
                 return;
             }
             

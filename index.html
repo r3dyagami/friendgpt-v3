@@ -3369,7 +3369,7 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
             
-            if (!message || creditData.credits < 1 || creditData.dailyCreditsUsed >= 20) return;
+            if (!message || creditData.credits < 1 || creditData.dailyCreditsUsed >= 200) return;
             
             // Deduct credit
             creditData.credits--;
@@ -3618,7 +3618,7 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             const isLightTheme = document.body.classList.contains('light-theme');
             
             // Show daily limit warning if needed
-            if (creditData.dailyCreditsUsed >= 20) {
+            if (creditData.dailyCreditsUsed >= 200) {
                 const warningColor = isLightTheme ? '#cc4444' : '#ff6666';
                 document.getElementById('creditsCount').style.color = warningColor;
                 document.getElementById('chatCreditsCount').style.color = warningColor;
@@ -3768,8 +3768,8 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
                 return;
             }
             
-            if (creditData.dailyCreditsUsed >= 20) {
-                showNotification('Daily limit reached! You can send up to 20 credits worth of gifts per day.', 'error');
+            if (creditData.dailyCreditsUsed >= 200) {
+                showNotification('Daily limit reached! You can send up to 200 credits worth of gifts per day.', 'error');
                 return;
             }
             

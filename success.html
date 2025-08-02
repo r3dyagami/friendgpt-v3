@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Success - FriendGPT</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .success-container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            max-width: 400px;
+        }
+        
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+        
+        .credits-added {
+            font-size: 24px;
+            color: #00ff88;
+            margin: 20px 0;
+        }
+        
+        .return-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #00ff88;
+            color: #0a0a0a;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .return-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✅</div>
+        <h1>Payment Successful!</h1>
+        <p>Thank you for your purchase!</p>
+        <div class="credits-added" id="creditsMessage">
+            Processing your energy credits...
+        </div>
+        <a href="index.html" class="return-btn">Return to FriendGPT</a>
+    </div>
+    
+    <script>
+        // Get credits from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const credits = urlParams.get('credits');
+        const sessionId = urlParams.get('session_id');
+        
+        if (credits) {
+            document.getElementById('creditsMessage').textContent = 
+                `${credits} energy credits have been added to your account!`;
+            
+            // Update local storage (in production, this should be done server-side)
+            const creditData = JSON.parse(localStorage.getItem('friendgpt_credits') || '{}');
+            creditData.credits = (creditData.credits || 0) + parseInt(credits);
+            creditData.totalPurchased = (creditData.totalPurchased || 0) + parseInt(credits);
+            localStorage.setItem('friendgpt_credits', JSON.stringify(creditData));
+        }
+        
+        // Auto-redirect after 5 seconds
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 5000);
+    </script>
+</body>
+</html>

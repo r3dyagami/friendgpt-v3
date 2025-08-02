@@ -666,12 +666,28 @@
             text-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
         }
 
-        .paypal-button-container {
+        .stripe-checkout-btn {
             width: 100%;
-            min-height: 40px;
-            position: relative;
-            z-index: 1;
-            margin-top: 0;
+            min-height: 45px;
+            background: #635BFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .stripe-checkout-btn:hover {
+            background: #4F46E5;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
+        }
+
+        .stripe-checkout-btn:active {
+            transform: translateY(0);
         }
 
         .purchase-notice {
@@ -1859,10 +1875,10 @@
     </style>
 </head>
 <body>
-    <!-- PayPal SDK - Replace YOUR_PAYPAL_CLIENT_ID with your actual PayPal Client ID -->
-    <!-- Get your Client ID from: https://developer.paypal.com/dashboard/ -->
-    <!-- For testing, use sandbox Client ID. For production, use live Client ID -->
-    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+    <!-- Stripe SDK -->
+    <!-- Get your Publishable Key from: https://dashboard.stripe.com/apikeys -->
+    <!-- For testing, use test keys. For production, use live keys -->
+    <script src="https://js.stripe.com/v3/"></script>
     <div class="app-container">
         <!-- Browser View -->
         <div id="browserView">
@@ -2134,7 +2150,7 @@
                             </div>
                             <div class="purchase-price">$1</div>
                         </div>
-                        <div class="paypal-button-container" id="paypal-button-50"></div>
+                        <a href="https://buy.stripe.com/test_bJe14pfnj7Dp3nrcoh1Fe02" class="stripe-checkout-btn" style="text-decoration: none; display: block; text-align: center;">Buy Now</a>
                     </div>
                     <div class="purchase-option" data-amount="100" data-price="5.00">
                         <div class="purchase-info">
@@ -2144,7 +2160,7 @@
                             </div>
                             <div class="purchase-price">$5</div>
                         </div>
-                        <div class="paypal-button-container" id="paypal-button-100"></div>
+                        <a href="https://buy.stripe.com/test_28E28t8YV3n9gad9c51Fe01" class="stripe-checkout-btn" style="text-decoration: none; display: block; text-align: center;">Buy Now</a>
                     </div>
                     <div class="purchase-option best-value" data-amount="300" data-price="10.00">
                         <div class="value-badge">Best Value</div>
@@ -2155,11 +2171,11 @@
                             </div>
                             <div class="purchase-price">$10</div>
                         </div>
-                        <div class="paypal-button-container" id="paypal-button-300"></div>
+                        <a href="https://buy.stripe.com/test_00w9AV4IFaPB1fjbkd1Fe03" class="stripe-checkout-btn" style="text-decoration: none; display: block; text-align: center;">Buy Now</a>
                     </div>
                 </div>
                 <div class="purchase-notice">
-                    <p>💳 Secure payment via PayPal</p>
+                    <p>💳 Secure payment via Stripe</p>
                     <p>⚡ Energy added instantly after payment</p>
                 </div>
                 <button class="close-btn" id="closePurchaseBtn">Close</button>
@@ -2800,63 +2816,53 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             }, 3000);
         }
 
-        // PayPal integration
-        let paypalButtonsInitialized = false;
+        // Stripe integration
+        // IMPORTANT: Replace with your actual Stripe publishable key
+        // Get your key from: https://dashboard.stripe.com/apikeys
+        const STRIPE_PUBLISHABLE_KEY = 'pk_test_YOUR_STRIPE_PUBLISHABLE_KEY';
         
-        function initializePayPalButtons() {
-            // Prevent multiple initializations
-            if (paypalButtonsInitialized) return;
-            
-            // Check if PayPal SDK is loaded
-            if (typeof paypal === 'undefined') {
-                console.error('PayPal SDK not loaded. Please add your PayPal Client ID.');
+        let stripe = null;
+        
+        function initializeStripe() {
+            if (!stripe && typeof Stripe !== 'undefined') {
+                stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+            }
+        }
+        
+        async function handleStripeCheckout(amount, priceInCents) {
+            if (!stripe) {
+                showNotification('Payment system not initialized. Please refresh the page.', 'error');
                 return;
             }
             
-            const packages = [
-                { id: 'paypal-button-50', amount: '1.00', credits: 50 },
-                { id: 'paypal-button-100', amount: '5.00', credits: 100 },
-                { id: 'paypal-button-300', amount: '10.00', credits: 300 }
-            ];
-            
-            packages.forEach(package => {
-                const container = document.getElementById(package.id);
-                if (container && container.innerHTML === '') {
-                    paypal.Buttons({
-                        style: {
-                            layout: 'horizontal',
-                            color: 'gold',
-                            shape: 'rect',
-                            label: 'paypal',
-                            height: 45,
-                            tagline: false
-                        },
-                        createOrder: function(data, actions) {
-                            return actions.order.create({
-                                purchase_units: [{
-                                    amount: {
-                                        value: package.amount,
-                                        currency_code: 'USD'
-                                    },
-                                    description: `${package.credits} Energy Credits for FriendGPT`
-                                }]
-                            });
-                        },
-                        onApprove: function(data, actions) {
-                            return actions.order.capture().then(function(details) {
-                                // Handle successful payment
-                                handleSuccessfulPayment(package.credits, details);
-                            });
-                        },
-                        onError: function(err) {
-                            console.error('PayPal Error:', err);
-                            showNotification('Payment failed. Please try again.', 'error');
-                        }
-                    }).render('#' + package.id);
+            try {
+                // In production, you'll need to create a checkout session on your server
+                // For now, this is a client-only demo
+                const response = await fetch('YOUR_SERVER_ENDPOINT/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        amount: amount,
+                        priceInCents: priceInCents
+                    })
+                });
+                
+                const session = await response.json();
+                
+                // Redirect to Stripe Checkout
+                const result = await stripe.redirectToCheckout({
+                    sessionId: session.id
+                });
+                
+                if (result.error) {
+                    showNotification(result.error.message, 'error');
                 }
-            });
-            
-            paypalButtonsInitialized = true;
+            } catch (error) {
+                console.error('Stripe checkout error:', error);
+                showNotification('Payment failed. Please try again.', 'error');
+            }
         }
         
         function handleSuccessfulPayment(credits, orderDetails) {
@@ -2965,8 +2971,14 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             document.getElementById('chatPlusBtn').addEventListener('click', openPurchaseModal);
             document.getElementById('closePurchaseBtn').addEventListener('click', closePurchaseModal);
             
-            // Purchase options - removed direct click handler
-            // All purchases must go through PayPal buttons
+            // Stripe checkout buttons
+            document.querySelectorAll('.stripe-checkout-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const amount = parseInt(this.dataset.amount);
+                    const priceInCents = parseInt(this.dataset.price);
+                    handleStripeCheckout(amount, priceInCents);
+                });
+            });
 
             // Gift modal
             document.getElementById('giftBtn').addEventListener('click', openGiftModal);
@@ -3435,8 +3447,8 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             }
         }
 
-        // Purchase credits - removed direct purchase to ensure PayPal payment
-        // All purchases must go through PayPal for security
+        // Purchase credits - removed direct purchase to ensure Stripe payment
+        // All purchases must go through Stripe for security
 
         // Send gift
         function sendGift(gift, cost) {
@@ -3470,8 +3482,8 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
         // Modal functions
         function openPurchaseModal() {
             document.getElementById('purchaseModal').style.display = 'flex';
-            // Initialize PayPal buttons when modal opens
-            setTimeout(initializePayPalButtons, 100);
+            // Initialize Stripe when modal opens
+            initializeStripe();
         }
 
         function closePurchaseModal() {

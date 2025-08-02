@@ -2903,6 +2903,64 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             }, 5000);
         }
 
+        function checkPaymentStatus() {
+            // Check if user is returning from Stripe payment
+            const referrer = document.referrer;
+            const fromStripe = referrer && (referrer.includes('stripe.com') || referrer.includes('checkout.stripe.com'));
+            
+            if (fromStripe) {
+                // Show a notification to check if payment was successful
+                showNotification('Welcome back! If your payment was successful, your energy credits will be added soon.', 'info');
+                
+                // In a real implementation, you would check with your backend
+                // to see if the payment was successful
+            }
+            
+            // Also check URL parameters in case you set up custom return URLs
+            const urlParams = new URLSearchParams(window.location.search);
+            const paymentSuccess = urlParams.get('payment_success');
+            const paymentCanceled = urlParams.get('payment_canceled');
+            const credits = urlParams.get('credits');
+            
+            if (paymentSuccess === 'true' && credits) {
+                // Payment was successful
+                const creditsAmount = parseInt(credits);
+                handleSuccessfulPayment(creditsAmount, { id: 'STRIPE-' + Date.now() });
+                
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (paymentCanceled === 'true') {
+                // Payment was canceled
+                showPaymentFailureModal();
+                
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+
+        function showPaymentFailureModal() {
+            const failureModal = document.createElement('div');
+            failureModal.className = 'purchase-success-modal';
+            failureModal.innerHTML = `
+                <div class="purchase-success-content" style="border-color: #ff4444;">
+                    <div class="success-icon" style="color: #ff4444;">❌</div>
+                    <h3 style="color: #ff4444;">Payment Canceled</h3>
+                    <p>Your payment was not completed. No charges were made.</p>
+                    <p style="font-size: 14px; opacity: 0.8;">If you experienced any issues, please try again.</p>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: #ff4444;">Close</button>
+                </div>
+            `;
+            
+            document.body.appendChild(failureModal);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (document.body.contains(failureModal)) {
+                    failureModal.remove();
+                }
+            }, 5000);
+        }
+
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
             loadCreditData();
@@ -2910,6 +2968,7 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             loadLanguage();
             setupInfiniteScroll();
             setupEventListeners();
+            checkPaymentStatus();
             updateCreditsDisplay();
             
             // Check for replenishment every minute

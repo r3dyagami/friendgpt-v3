@@ -1728,6 +1728,12 @@
             font-weight: 600;
         }
 
+        body.light-theme .credits #creditsCount,
+        body.light-theme .credits #chatCreditsCount {
+            color: #005522;
+            font-weight: 700;
+        }
+
         body.light-theme .credits-plus {
             background: #008844;
             color: #fff;
@@ -3516,13 +3522,17 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             document.getElementById('creditsCount').textContent = creditData.credits;
             document.getElementById('chatCreditsCount').textContent = creditData.credits;
             
+            const isLightTheme = document.body.classList.contains('light-theme');
+            
             // Show daily limit warning if needed
             if (creditData.dailyCreditsUsed >= 20) {
-                document.getElementById('creditsCount').style.color = '#ff6666';
-                document.getElementById('chatCreditsCount').style.color = '#ff6666';
+                const warningColor = isLightTheme ? '#cc4444' : '#ff6666';
+                document.getElementById('creditsCount').style.color = warningColor;
+                document.getElementById('chatCreditsCount').style.color = warningColor;
             } else {
-                document.getElementById('creditsCount').style.color = '#00ff88';
-                document.getElementById('chatCreditsCount').style.color = '#00ff88';
+                const normalColor = isLightTheme ? '#005522' : '#00ff88';
+                document.getElementById('creditsCount').style.color = normalColor;
+                document.getElementById('chatCreditsCount').style.color = normalColor;
             }
         }
 

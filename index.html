@@ -1730,7 +1730,13 @@
 
         body.light-theme .credits #creditsCount,
         body.light-theme .credits #chatCreditsCount {
-            color: #005522;
+            color: #005522 !important;
+            font-weight: 700;
+        }
+
+        body:not(.light-theme) .credits #creditsCount,
+        body:not(.light-theme) .credits #chatCreditsCount {
+            color: #00ff88 !important;
             font-weight: 700;
         }
 

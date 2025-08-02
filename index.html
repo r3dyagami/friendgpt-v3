@@ -3131,6 +3131,15 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
 
         // Setup event listeners
         function setupEventListeners() {
+            // Character cards
+            document.querySelectorAll('.character-card:not(.plus-card)').forEach(card => {
+                card.addEventListener('click', function() {
+                    const characterKey = this.dataset.character;
+                    if (characterKey) {
+                        selectCharacter(characterKey);
+                    }
+                });
+            });
 
             // Back button
             document.getElementById('backBtn').addEventListener('click', goBack);

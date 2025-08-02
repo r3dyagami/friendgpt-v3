@@ -275,7 +275,8 @@
         }
 
         .placeholder-text {
-            color: #777 !important;
+            color: #999 !important;
+            font-weight: 500;
         }
 
         .coming-soon {
@@ -1395,7 +1396,8 @@
         }
 
         body.light-theme .header-subtitle {
-            color: #666;
+            color: #555;
+            font-weight: 500;
         }
 
         body.light-theme .character-card {
@@ -1413,11 +1415,12 @@
         }
 
         body.light-theme .character-creator {
-            color: #888;
+            color: #555;
+            font-weight: 500;
         }
 
         body.light-theme .character-description {
-            color: #666;
+            color: #444;
         }
 
         body.light-theme .plus-card {
@@ -1426,8 +1429,9 @@
         }
 
         body.light-theme .placeholder-card {
-            border-color: #eee;
-            background: rgba(200, 200, 200, 0.3);
+            border-color: #ddd;
+            background: rgba(240, 240, 240, 0.8);
+            opacity: 0.8;
         }
 
         body.light-theme .placeholder-avatar {
@@ -1436,7 +1440,8 @@
         }
 
         body.light-theme .placeholder-text {
-            color: #aaa !important;
+            color: #666 !important;
+            font-weight: 500;
         }
 
         body.light-theme .section-title {
@@ -1473,11 +1478,12 @@
         }
 
         body.light-theme .welcome-message {
-            color: #666;
+            color: #444;
+            font-weight: 500;
         }
 
         body.light-theme .welcome-message h3 {
-            color: #00cc77;
+            color: #008844;
         }
 
         body.light-theme .purchase-modal,
@@ -1517,16 +1523,18 @@
         }
 
         body.light-theme .purchase-amount {
-            color: #333;
+            color: #222;
+            font-weight: 600;
         }
 
         body.light-theme .energy-icon {
-            color: #00cc77;
+            color: #008844;
         }
 
         body.light-theme .purchase-price {
-            color: #00cc77;
-            text-shadow: 0 0 10px rgba(0, 204, 119, 0.3);
+            color: #006633;
+            text-shadow: none;
+            font-weight: 800;
         }
 
         body.light-theme .gift-item,
@@ -1686,7 +1694,8 @@
 
         body.light-theme .form-group label,
         body.light-theme .setting-item label {
-            color: #333;
+            color: #222;
+            font-weight: 600;
         }
 
         body.light-theme .close-btn {
@@ -1708,17 +1717,20 @@
         }
 
         body.light-theme .chat-character-creator {
-            color: #888;
+            color: #555;
+            font-weight: 500;
         }
 
         body.light-theme .credits {
-            background: rgba(0, 204, 119, 0.1);
-            border-color: #00cc77;
-            color: #00cc77;
+            background: rgba(0, 136, 68, 0.15);
+            border-color: #008844;
+            color: #006633;
+            font-weight: 600;
         }
 
         body.light-theme .credits-plus {
-            background: #00cc77;
+            background: #008844;
+            color: #fff;
         }
 
         body.light-theme .header-title {
@@ -1757,6 +1769,17 @@
 
         body.light-theme .send-button {
             background: #00cc77;
+        }
+
+        body.light-theme .stripe-checkout-btn {
+            background: #008844;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        body.light-theme .stripe-checkout-btn:hover {
+            background: #006633;
+            box-shadow: 0 4px 12px rgba(0, 136, 68, 0.3);
         }
 
         body.light-theme .message.user .message-bubble {
@@ -2063,7 +2086,7 @@
 
                 <!-- Create Character Section -->
                 <div class="section">
-                    <h2 class="section-title">Your Characters</h2>
+                    <h2 class="section-title">Your Custom AI</h2>
                     <div class="character-grid">
                         <div class="character-card plus-card">
                             <div class="character-avatar plus-avatar">
@@ -2081,10 +2104,10 @@
                         <div class="character-card placeholder-card">
                             <div class="character-avatar placeholder-avatar">👤</div>
                             <div class="character-info">
-                                <div class="character-name placeholder-text">Your Custom AI</div>
+                                <div class="character-name placeholder-text">Custom AI</div>
                                 <div class="character-creator placeholder-text">by @you</div>
-                                <div class="character-interactions placeholder-text">0 interactions</div>
-                                <div class="character-description placeholder-text">Create your perfect companion...</div>
+                                <div class="character-interactions placeholder-text">0 chats</div>
+                                <div class="character-description placeholder-text">Create your companion</div>
                                 <div class="coming-soon">Waiting for You</div>
                             </div>
                         </div>
@@ -2092,10 +2115,10 @@
                         <div class="character-card placeholder-card">
                             <div class="character-avatar placeholder-avatar">💭</div>
                             <div class="character-info">
-                                <div class="character-name placeholder-text">Dream Character</div>
+                                <div class="character-name placeholder-text">Dream AI</div>
                                 <div class="character-creator placeholder-text">by @you</div>
-                                <div class="character-interactions placeholder-text">0 interactions</div>
-                                <div class="character-description placeholder-text">Bring your imagination to life...</div>
+                                <div class="character-interactions placeholder-text">0 chats</div>
+                                <div class="character-description placeholder-text">Your imagination</div>
                                 <div class="coming-soon">Your Canvas</div>
                             </div>
                         </div>
@@ -2364,7 +2387,7 @@
                 featured: "Featured",
                 popular: "Popular",
                 trending: "Trending",
-                yourCharacters: "Your Characters",
+                yourCharacters: "Your Custom AI",
                 createCharacterCard: "Create Character",
                 designOwn: "Design your own character",
                 clickToCreate: "Click to create",

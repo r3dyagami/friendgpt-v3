@@ -669,8 +669,8 @@
         .stripe-checkout-btn {
             width: 100%;
             min-height: 45px;
-            background: #635BFF;
-            color: white;
+            background: #00ff88;
+            color: #0a0a0a;
             border: none;
             border-radius: 8px;
             font-size: 16px;
@@ -678,12 +678,17 @@
             cursor: pointer;
             transition: all 0.2s ease;
             margin-top: 10px;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            line-height: 45px;
         }
 
         .stripe-checkout-btn:hover {
-            background: #4F46E5;
+            background: #00dd77;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+            color: #0a0a0a;
         }
 
         .stripe-checkout-btn:active {
@@ -2150,7 +2155,7 @@
                             </div>
                             <div class="purchase-price">$1</div>
                         </div>
-                        <a href="https://buy.stripe.com/test_bJe14pfnj7Dp3nrcoh1Fe02" class="stripe-checkout-btn" style="text-decoration: none; display: block; text-align: center;">Buy Now</a>
+                        <a href="https://buy.stripe.com/test_bJe14pfnj7Dp3nrcoh1Fe02" class="stripe-checkout-btn">Buy Now</a>
                     </div>
                     <div class="purchase-option" data-amount="100" data-price="5.00">
                         <div class="purchase-info">
@@ -2160,7 +2165,7 @@
                             </div>
                             <div class="purchase-price">$5</div>
                         </div>
-                        <a href="https://buy.stripe.com/test_28E28t8YV3n9gad9c51Fe01" class="stripe-checkout-btn" style="text-decoration: none; display: block; text-align: center;">Buy Now</a>
+                        <a href="https://buy.stripe.com/test_28E28t8YV3n9gad9c51Fe01" class="stripe-checkout-btn">Buy Now</a>
                     </div>
                     <div class="purchase-option best-value" data-amount="300" data-price="10.00">
                         <div class="value-badge">Best Value</div>
@@ -2171,7 +2176,7 @@
                             </div>
                             <div class="purchase-price">$10</div>
                         </div>
-                        <a href="https://buy.stripe.com/test_00w9AV4IFaPB1fjbkd1Fe03" class="stripe-checkout-btn" style="text-decoration: none; display: block; text-align: center;">Buy Now</a>
+                        <a href="https://buy.stripe.com/test_00w9AV4IFaPB1fjbkd1Fe03" class="stripe-checkout-btn">Buy Now</a>
                     </div>
                 </div>
                 <div class="purchase-notice">
@@ -2971,14 +2976,7 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             document.getElementById('chatPlusBtn').addEventListener('click', openPurchaseModal);
             document.getElementById('closePurchaseBtn').addEventListener('click', closePurchaseModal);
             
-            // Stripe checkout buttons
-            document.querySelectorAll('.stripe-checkout-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const amount = parseInt(this.dataset.amount);
-                    const priceInCents = parseInt(this.dataset.price);
-                    handleStripeCheckout(amount, priceInCents);
-                });
-            });
+            // Stripe checkout buttons are now direct links - no JS needed
 
             // Gift modal
             document.getElementById('giftBtn').addEventListener('click', openGiftModal);

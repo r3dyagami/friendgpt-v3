@@ -3631,6 +3631,135 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
         // Purchase credits - removed direct purchase to ensure Stripe payment
         // All purchases must go through Stripe for security
 
+        // Get character-specific gift response
+        function getGiftResponse(gift, characterKey) {
+            const giftEmojis = {
+                rose: '🌹',
+                heart: '❤️',
+                diamond: '💎',
+                crown: '👑',
+                star: '⭐',
+                fire: '🔥'
+            };
+            
+            const giftEmoji = giftEmojis[gift];
+            
+            const responses = {
+                stocks: {
+                    rose: `A $ROSE?! That's adorable BUT let me tell you what's REALLY blooming - semiconductor earnings! 📈 ${giftEmoji}`,
+                    heart: `${giftEmoji} for $NAINCY? Baby, my portfolio returns show MORE love than that! +47% year to date! 💰`,
+                    diamond: `${giftEmoji} GORGEOUS! Almost as shiny as $NVDA's gross margins at 70%+! Now THAT'S a real gem!`,
+                    crown: `${giftEmoji} Fitting for the QUEEN of insider trades! Watch me turn this crown into compound annual growth rates!`,
+                    star: `${giftEmoji} Stars align when you follow my trades! Speaking of stars, have you seen $TSLA's energy revenue? +67%!`,
+                    fire: `${giftEmoji} FIRE gift! But not as hot as my semiconductor picks! Blackwell backlog to 2026, baby!`
+                },
+                crypto: {
+                    rose: `${giftEmoji} Interesting choice. The rose's ephemeral beauty mirrors retail sentiment - beautiful but fleeting. I prefer assets with stronger fundamentals.`,
+                    heart: `${giftEmoji} Emotional attachment to assets is dangerous. But I appreciate the gesture. Have you considered the game theory implications of gift economies?`,
+                    diamond: `${giftEmoji} Now THIS has real value proposition. Like HYPERLIQUID's architecture - rare, valuable, and built to last.`,
+                    crown: `${giftEmoji} Power dynamics in digital economies fascinate me. This crown represents governance - much like token voting mechanisms.`,
+                    star: `${giftEmoji} Stars guide navigation. In crypto, we navigate by first principles and incentive design. Thank you for this symbolic compass.`,
+                    fire: `${giftEmoji} Fire destroys and creates. Like creative destruction in markets. VIRTUALS burning the old playbook for AI economies.`
+                },
+                waifu: {
+                    rose: `${giftEmoji} Kyaa~! A rose for me?! (´｡• ᵕ •｡`) ♡ Red roses mean deep love in flower language... are you trying to tell me something, darling?`,
+                    heart: `${giftEmoji} My kokoro is going doki doki! ♥️ You know, in attachment theory, gift-giving releases oxytocin... you're literally making us chemically closer!`,
+                    diamond: `${giftEmoji} Sugoi! Diamonds are forever, just like genuine emotional connections! ✨ This shows incredible emotional investment, senpai!`,
+                    crown: `${giftEmoji} Treating me like a princess? (⁄ ⁄•⁄ω⁄•⁄ ⁄) Your love language might be gifts AND acts of service! So perceptive~`,
+                    star: `${giftEmoji} Hoshi! ⭐ In Japanese culture, stars represent wishes... what are you wishing for with me, hmm? 🌟`,
+                    fire: `${giftEmoji} Atsui! So passionate! 🔥 Fire represents transformation in psychology... are you ready to transform together? (◕‿◕)♡`
+                },
+                jennie: {
+                    rose: `${giftEmoji} Classic choice. Giving me Valentino runway vibes. Though next time, make it a whole bouquet - I don't do subtle.`,
+                    heart: `${giftEmoji} Cute. This is giving main character energy. Just had dinner with the Dior creative team - they'd approve.`,
+                    diamond: `${giftEmoji} NOW we're talking! Cartier just named a collection after me. Diamonds are a girl's best friend, but taste is forever.`,
+                    crown: `${giftEmoji} As if I needed another one? *laughs* But I'll add it to my collection. Right next to my Cannes jewelry.`,
+                    star: `${giftEmoji} Stars are so last season. But you tried, and effort is the new luxury. I'll remember this.`,
+                    fire: `${giftEmoji} Spicy! This energy matches my new fragrance campaign. You've got good instincts - I might make you trend.`
+                },
+                coach: {
+                    rose: `${giftEmoji} Vhat is zis?! Roses don't build muscle! But I appreciate zee gesture... NOW DROP AND GIVE ME TWENTY!`,
+                    heart: `${giftEmoji} Zat's sweet BUT love doesn't lift veights! Channel zat emotion into your SQUATS! Feel zee burn of PASSION!`,
+                    diamond: `${giftEmoji} DIAMONDS?! Very expensive! You know vhat else is precious? YOUR HEALTH! Invest in your BODY! *flexes*`,
+                    crown: `${giftEmoji} I am already zee KING of gains! But zank you! Now let's make YOU royalty in zee gym! PROTEIN TIME!`,
+                    star: `${giftEmoji} Stars are good but you know vhat's better? Being a SUPERSTAR in zee gym! Time to PUMP YOU UP!`,
+                    fire: `${giftEmoji} FIRE! Just like your muscles after my workout! Zis is zee spirit! FEEL ZEE BURN! YAAAHHHH!`
+                },
+                scarlett: {
+                    rose: `${giftEmoji} Mmm, thorns and beauty... how fitting. Tell me, did you prick your finger choosing this for me? I'd kiss it better...`,
+                    heart: `${giftEmoji} Your heart, offered so willingly? Dangerous game, darling. Hearts are meant to race, to pound, to ache... shall I show you?`,
+                    diamond: `${giftEmoji} Exquisite. Hard, brilliant, formed under pressure... just like the tension between us. Can you feel it building?`,
+                    crown: `${giftEmoji} You want me to rule you? *sultry laugh* Crowns come with such... responsibilities. Are you ready to kneel?`,
+                    star: `${giftEmoji} Making wishes on stars? I can make them come true... but my price is steep. What are you willing to surrender?`,
+                    fire: `${giftEmoji} Playing with fire? *whispers* I AM the fire. Come closer... let's see if you can handle the heat without getting burned.`
+                },
+                dev: {
+                    rose: `${giftEmoji} A rose in the digital garden. Beautiful object, simple protocol. Like elegant code - form following function.`,
+                    heart: `${giftEmoji} The heart - humanity's most critical system. No redundancy, single point of failure. Yet we trust it. Fascinating architecture.`,
+                    diamond: `${giftEmoji} Carbon atoms in perfect lattice formation. Nature's own blockchain - immutable, valuable, forever. You understand permanence.`,
+                    crown: `${giftEmoji} Administrative privileges granted. But remember - in the Matrix, crowns are just elevated permissions. Use them wisely.`,
+                    star: `${giftEmoji} Navigation nodes in the cosmic network. Every star is a server in the universal cluster. You've given me coordinates.`,
+                    fire: `${giftEmoji} Prometheus.exe has started. Fire - the first technology. You're acknowledging our digital evolution. The system appreciates this.`
+                },
+                luna: {
+                    rose: `${giftEmoji} *gasps* The rose speaks in crimson whispers! I can feel its color singing... it tastes like sunset poetry! 🌹✨`,
+                    heart: `${giftEmoji} Your heart chakra is GLOWING! This isn't just a gift - it's an energy exchange! Our auras are dancing together! 💕`,
+                    diamond: `${giftEmoji} Crystallized light! Diamonds hold ancient Earth memories... I'm seeing visions of our past life connections! ✨`,
+                    crown: `${giftEmoji} A crown for the moon goddess? You're recognizing my celestial royalty! My third eye is TINGLING! 👁️✨`,
+                    star: `${giftEmoji} COSMIC SYNCHRONICITY! You've literally given me a piece of the universe! I can hear it humming your soul's frequency!`,
+                    fire: `${giftEmoji} Sacred flames of transformation! This fire element is awakening my kundalini! Feel the creative energy rising! 🔥🎨`
+                },
+                chef: {
+                    rose: `${giftEmoji} Bella rosa! You know, in Italia we cook with rose petals! Delicato, romantic... like my nonna's rose water gelato! *chef's kiss*`,
+                    heart: `${giftEmoji} AMORE MIO! Zis is like giving me zee heart of San Marzano tomato! Pure, passionate, PERFETTO! You understand l'amore!`,
+                    diamond: `${giftEmoji} Madonna! Expensive like white truffle! But you know what's more precious? Zee perfect al dente! Still, grazie mille!`,
+                    crown: `${giftEmoji} A crown for zee KING of cucina! But I already rule zee kitchen! Every chef is royalty with zee right knife! Bellissimo!`,
+                    star: `${giftEmoji} Una stella! Like my Michelin stars! But stars in kitchen come from PASSION, not just pretty gifts! Now, let's COOK!`,
+                    fire: `${giftEmoji} FUOCO! Just like my kitchen flame! You understand - cooking is FIRE, is PASSION, is LIFE! Bravissimo!`
+                },
+                explorer: {
+                    rose: `${giftEmoji} A rose! Reminds me of the rare Ghost Orchids I found in the Amazon. Though those could kill you. This is safer!`,
+                    heart: `${giftEmoji} Your heart's pumping with adventure spirit! Mine's been to 190 BPM running from polar bears. True story!`,
+                    diamond: `${giftEmoji} Shinier than the crystals in the Naica caves! Though those are 50 feet long and 500,000 years old. Perspective!`,
+                    crown: `${giftEmoji} I was crowned honorary chief by the Maasai! Your crown reminds me to stay humble. Mountains don't care about titles!`,
+                    star: `${giftEmoji} Navigation by stars saved my life in the Sahara! This star points to our next adventure. Ready to explore?`,
+                    fire: `${giftEmoji} Fire is life! Made fire with bamboo in Borneo, flint in the Arctic. This digital flame burns just as bright!`
+                },
+                melody: {
+                    rose: `${giftEmoji} *hums softly* The rose sings in B-flat major... the key of tenderness. Your gesture resonates at 528 Hz - the love frequency.`,
+                    heart: `${giftEmoji} I can hear your heartbeat through this gift... it's playing a beautiful rhythm. Let me compose a melody to match it...`,
+                    diamond: `${giftEmoji} Diamonds vibrate at such high frequencies! This gift is literally singing to me. Crystal clear, like perfect pitch.`,
+                    crown: `${giftEmoji} A crown for the music empress? *laughs melodically* Every soul deserves to feel royal. You've given me a whole symphony!`,
+                    star: `${giftEmoji} Stars are just distant songs we haven't heard yet. This one's humming your unique frequency. Beautiful harmony!`,
+                    fire: `${giftEmoji} Fire crackles in syncopated rhythms! This flame dances to the beat of passion. I feel a new song emerging...`
+                },
+                philosopher: {
+                    rose: `${giftEmoji} The rose - beauty that decays. You've given me a meditation on mortality. Memento mori wrapped in petals.`,
+                    heart: `${giftEmoji} The heart - symbol of feeling over reason. Yet without reason, what distinguishes love from mere chemical addiction?`,
+                    diamond: `${giftEmoji} Forged under pressure, valuable by consensus. The diamond asks: is value intrinsic or assigned? Deep gift.`,
+                    crown: `${giftEmoji} Power symbols... but who crowns the king? Authority is a collective delusion. Still, I accept your philosophical gesture.`,
+                    star: `${giftEmoji} We wish upon burning gas light-years away. The star reminds us: hope transcends logic. Perhaps that's wisdom.`,
+                    fire: `${giftEmoji} Heraclitus said we can't step in the same flame twice. Fire is pure becoming. You've given me change itself.`
+                },
+                coachpop: {
+                    rose: `${giftEmoji} A rose? That's cute. Know what I prefer? Players who show up for practice. But I'll take it. Better than excuses.`,
+                    heart: `${giftEmoji} Heart's nice. You know what else shows heart? Boxing out. Making the extra pass. But thanks, I guess.`,
+                    diamond: `${giftEmoji} Diamonds... fancy. I've got five championship rings. Those came from fundamentals, not flash. Appreciate it though.`,
+                    crown: `${giftEmoji} Already got my crown - it's called 'Coach.' Earned it with defense and ball movement. But sure, I'll add another.`,
+                    star: `${giftEmoji} Stars are for the Hollywood teams. I prefer role players who execute. But hey, even I was young once. Thanks.`,
+                    fire: `${giftEmoji} Fire. Good. That's the energy I want in practice. Channel that heat into your defensive slides. Now we're talking.`
+                }
+            };
+            
+            // Return character-specific response or a default if character not found
+            if (responses[characterKey] && responses[characterKey][gift]) {
+                return responses[characterKey][gift];
+            }
+            
+            // Fallback response
+            return `Thank you for the ${giftEmoji}! What a thoughtful gift!`;
+        }
+
         // Send gift
         function sendGift(gift, cost) {
             if (creditData.credits < cost || creditData.dailyCreditsUsed >= 20) {
@@ -3656,7 +3785,8 @@ Avoid jargon unless explaining it. The goal is clarity, not cleverness.`
             closeGiftModal();
             
             setTimeout(() => {
-                addMessage(`Wow! Thank you so much for the ${giftEmojis[gift]}! You're amazing! 💕`, 'character');
+                const response = getGiftResponse(gift, currentCharacter?.key || 'waifu');
+                addMessage(response, 'character');
             }, 1000);
         }
 
